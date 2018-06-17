@@ -1,0 +1,19 @@
+{
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
+    "/css/plugins/mdi/css/materialdesignicons.min.css": "/css/plugins/mdi/css/materialdesignicons.min.css",
+    "/css/plugins/simple-line-icons/css/simple-line-icons.css": "/css/plugins/simple-line-icons/css/simple-line-icons.css",
+    "/css/plugins/flag-icon-css/css/flag-icon.min.css": "/css/plugins/flag-icon-css/css/flag-icon.min.css",
+    "/css/plugins/perfect-scrollbar/dist/css/perfect-scrollbar.min.css": "/css/plugins/perfect-scrollbar/dist/css/perfect-scrollbar.min.css",
+    "/css/plugins/font-awesome/css/font-awesome.min.css": "/css/plugins/font-awesome/css/font-awesome.min.css",
+    "/css/plugins/jquery-bar-rating/dist/themes/fontawesome-stars.css": "/css/plugins/jquery-bar-rating/dist/themes/fontawesome-stars.css",
+    "/js/plugins/jquery/dist/jquery.min.js": "/js/plugins/jquery/dist/jquery.min.js",
+    "/js/plugins/popper.js/dist/umd/popper.min.js": "/js/plugins/popper.js/dist/umd/popper.min.js",
+    "/js/plugins/bootstrap/dist/js/bootstrap.min.js": "/js/plugins/bootstrap/dist/js/bootstrap.min.js",
+    "/js/plugins/perfect-scrollbar/dist/js/perfect-scrollbar.jquery.min.js": "/js/plugins/perfect-scrollbar/dist/js/perfect-scrollbar.jquery.min.js",
+    "/js/plugins/jquery-bar-rating/dist/jquery.barrating.min.js": "/js/plugins/jquery-bar-rating/dist/jquery.barrating.min.js",
+    "/js/plugins/chart.js/dist/Chart.min.js": "/js/plugins/chart.js/dist/Chart.min.js",
+    "/js/plugins/raphael/raphael.min.js": "/js/plugins/raphael/raphael.min.js",
+    "/js/plugins/morris.js/morris.min.js": "/js/plugins/morris.js/morris.min.js",
+    "/js/plugins/jquery-sparkline/jquery.sparkline.min.js": "/js/plugins/jquery-sparkline/jquery.sparkline.min.js"
+}
