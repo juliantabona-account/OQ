@@ -14,7 +14,7 @@ class Company extends Model
      */
     protected $fillable = [
         'name', 'description', 'city', 'state_or_region', 'address', 'industry', 'type', 'website_link',
-        'profile_doc_url', 'logo_url', 'phone_ext', 'phone_num', 'email', 'created_by', 'company_id',
+        'profile_doc_url', 'logo_url', 'phone_ext', 'phone_num', 'email', 'created_by',
     ];
 
     public function documents()
@@ -50,6 +50,27 @@ class Company extends Model
     public function processForms()
     {
         return $this->hasMany('App\ProcessForm');
+    }
+
+    public function clients()
+    {
+        return $this->belongsToMany('App\Company', 'company_clients', 'company_id', 'client_id')
+                    ->withPivot('client_id', 'company_id', 'created_by')
+                    ->withTimestamps();
+    }
+
+    public function contractors()
+    {
+        return $this->belongsToMany('App\Company', 'company_contractors', 'company_id', 'contractor_id')
+                    ->withPivot('contractor_id', 'company_id', 'created_by')
+                    ->withTimestamps();
+    }
+
+    public function contacts()
+    {
+        return $this->belongsToMany('App\User', 'company_contacts', 'company_id', 'contact_id')
+                    ->withPivot('contact_id', 'company_id')
+                    ->withTimestamps();
     }
 
     /*

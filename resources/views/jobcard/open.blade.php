@@ -9,7 +9,7 @@
                     <div class="card card-hoverable">
                         <div class="card-body">
                             <i class="float-left icon-flag icon-sm icons ml-3"></i>
-                            <h6 class="card-title float-left mb-0 ml-2">Pending Jobs</h6>
+                            <h6 class="card-title float-left mb-0 ml-2">Open Jobs</h6>
                             <div class="d-flex table-responsive">
                                 <div class="btn-group ml-auto mr-2 border-0">
                                 <input type="text" class="form-control" placeholder="Search Here">
@@ -41,10 +41,10 @@
                                             <td>25 May 2017</td>
                                             <td data-toggle="tooltip" data-placement="top" data-html="true" title="<b>Katlo Sesiane<b><br>Mobile: +267 76548921<br>Email: bonolosesiane@gmail.com" class="d-none d-md-table-cell">Mr Sesiane</td>
                                             <td data-toggle="tooltip" data-placement="top" data-html="true" title="<b>Stanley Busang<b><br>Mobile: +267 76902134<br>Email: stanley@trioptimum.co.bw" class="d-none d-md-table-cell">TriOptimum (PTY) LTD</td>      
-                                            <td class="d-none d-md-table-cell">6 days</td>                                              
+                                            <td class="d-none d-md-table-cell text-reddit">6 days</td>                                              
                                             <td class="d-none d-md-table-cell">High</td>                                              
                                             <td>
-                                                <div class="badge badge-warning badge-fw">Pending</div>
+                                                <div class="badge badge-primary badge-fw">Open</div>
                                             </td>
                                         </tr>
                                         <tr class='clickable-row' data-href='/jobcards/1'>
@@ -56,7 +56,7 @@
                                             <td class="d-none d-md-table-cell text-reddit">1 day</td>   
                                             <td class="d-none d-md-table-cell">Medium</td>   
                                             <td>
-                                                <div class="badge badge-warning badge-fw">Pending</div>
+                                                <div class="badge badge-primary badge-fw">Open</div>
                                             </td>
                                         </tr>
                                         <tr class='clickable-row' data-href='/jobcards/1'>
@@ -65,10 +65,10 @@
                                             <td>30 May 2017</td>
                                             <td data-toggle="tooltip" data-placement="top" data-html="true" title="<b>Lebogang Kenosi<b><br>Mobile: +267 76548921<br>Email: lebogangkenosi@gmail.com" class="d-none d-md-table-cell">Mr. Kenosi</td>
                                             <td data-toggle="tooltip" data-placement="top" data-html="true" title="<b>Kenneth Jacobs<b><br>Mobile: +267 71563212<br>Email: kenneth@electrohive.co.bw" class="d-none d-md-table-cell">Electrohive (PTY) LTD</td>      
-                                            <td class="d-none d-md-table-cell">4 days</td>   
+                                            <td class="d-none d-md-table-cell text-reddit">4 days</td>   
                                             <td class="d-none d-md-table-cell">Low</td>   
                                             <td>
-                                            <div class="badge badge-warning badge-fw">Pending</div>
+                                            <div class="badge badge-primary badge-fw">Open</div>
                                             </td>
                                         </tr>
                                         <tr class='clickable-row' data-href='/jobcards/1'>
@@ -77,10 +77,10 @@
                                             <td>04 May 2017</td>
                                             <td data-toggle="tooltip" data-placement="top" data-html="true" title="<b>Keneilwe Monekwe<b><br>Mobile: +267 76548921<br>Email: keneilwemonekwe@gmail.com" class="d-none d-md-table-cell">Ms Monekwe</td>
                                             <td data-toggle="tooltip" data-placement="top" data-html="true" title="<b>Heather Moila<b><br>Mobile: +267 74902321<br>Email: heather@powerdrive.co.bw" class="d-none d-md-table-cell">Powerdrive (PTY) LTD</td>      
-                                            <td class="d-none d-md-table-cell">3 days</td>   
+                                            <td class="d-none d-md-table-cell text-reddit">3 days</td>   
                                             <td class="d-none d-md-table-cell">High</td>   
                                             <td>
-                                                <div class="badge badge-warning badge-fw">Pending</div>
+                                                <div class="badge badge-primary badge-fw">Open</div>
                                             </td>
                                         </tr>
                                     </tbody>

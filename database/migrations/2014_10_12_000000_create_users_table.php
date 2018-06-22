@@ -15,9 +15,9 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name')->nullable();
-            $table->string('email')->unique();
-            $table->string('username')->unique();
-            $table->string('password');
+            $table->string('email')->unique()->nullable();
+            $table->string('username')->unique()->nullable();
+            $table->string('password')->nullable();
             $table->string('gender')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('bio')->nullable();
@@ -29,8 +29,8 @@ class CreateUsersTable extends Migration
             $table->string('verifyToken')->nullable();
             $table->text('settings')->nullable();
             $table->text('tutorial_status')->nullable();
-            $table->integer('company_id')->unsigned()->nullable();
-            $table->integer('position_id')->unsigned()->nullable();
+            $table->integer('branch_id')->unsigned()->nullable();
+            $table->string('position')->nullable();
             $table->integer('created_by')->unsigned()->nullable();
             $table->rememberToken();
             $table->timestamps();

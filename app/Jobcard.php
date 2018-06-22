@@ -46,6 +46,23 @@ class Jobcard extends Model
         return $this->morphMany('App\ProcessFormAllocation', 'processable');
     }
 
+    public function owningBranch()
+    {
+        return $this->belongsTo('App\CompanyBranch', 'branch_id');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo('App\Company', 'client_id');
+    }
+
+    public function contractorsList()
+    {
+        return $this->belongsToMany('App\Company', 'jobcard_contractors', 'jobcard_id', 'contractor_id')
+                    ->withPivot('jobcard_id', 'contractor_id', 'amount', 'quotation_doc_url')
+                    ->withTimestamps();
+    }
+
     /*
         public function progressSteps()
         {

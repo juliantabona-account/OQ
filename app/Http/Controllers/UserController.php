@@ -7,6 +7,8 @@ use Image;
 use Storage;
 use Redirect;
 use Validator;
+use App\User;
+use App\Company;
 use App\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -27,16 +29,89 @@ class UserController extends Controller
 
     public function edit()
     {
-        $general_fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'phone_ext', 'phone_num', 'email', 'company_id', 'position_id'];
+        $general_fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'phone_ext', 'phone_num', 'email', 'company_id', 'position'];
         $avatar_fields = ['avatar'];
         $security_fields = ['current_password', 'password', 'password_confirmation'];
 
         return view('profile.edit', compact('general_fields', 'avatar_fields', 'security_fields'));
     }
 
-    public function store(Request $request, $user_id)
+    public function store(Request $request)
     {
-        return $request->all();
+        // Rules for form data
+        $rules = array(
+            //General Validation
+            'user_first_name' => 'required|max:255|min:3',
+            'user_last_name' => 'max:255',
+            'user_phone_ext' => 'max:3',
+            'user_phone_num' => 'max:13',
+        );
+
+        // This will check for empty string and any null values for the provided email
+        // If it is empty save as NULL, because empty strings cause issues when saving for
+        // fields that should be UNIQUE in the database, but NULL values are allowed even
+        // when you have duplicate entries
+        if (!empty($request->input('user_email'))) {
+            // Rules for password changes
+            $rules = array_merge($rules, [
+                'user_email' => 'unique:users,email',
+                ]
+            );
+        } else {
+            $request->merge(['user_email' => null]);
+        }
+
+        //Customized error messages
+        $messages = [
+            //General Validation
+            'user_first_name.required' => 'Enter first name',
+            'user_first_name.max' => 'First name cannot be more than 255 characters',
+            'user_first_name.min' => 'First name must be atleast 3 characters',
+            'user_last_name.max' => 'Last name cannot be more than 255 characters',
+            'user_email.unique' => 'This email is already being used',
+            'user_phone_ext.max' => 'Phone number extension cannot be more than 3 characters',
+            'user_phone_num.max' => 'Phone number cannot be more than 13 characters',
+          ];
+
+        // Now pass the input and rules into the validator
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Check to see if validation fails or passes
+        if ($validator->fails()) {
+            //Alert update error
+            $request->session()->flash('alert', array('Couldn\'t create contact, check your information!', 'icon-exclamation icons', 'danger'));
+
+            return Redirect::back()->withErrors($validator)->withInput();
+        }
+
+        //Create the client contact
+        $user = User::create([
+            'first_name' => $request->input('user_first_name'),
+            'last_name' => $request->input('user_last_name'),
+            'position' => $request->input('user_position'),
+            'phone_ext' => $request->input('user_phone_ext'),
+            'phone_num' => $request->input('user_phone_num'),
+            'email' => $request->input('user_email'),
+            'created_by' => Auth::id(),
+        ]);
+
+        //If the contact was created successfully
+        if ($user) {
+            if (!empty($request->input('client_id'))) {
+                //Save the contact to the client company
+                $client = Company::find($request->input('client_id'));
+                $client->contacts()->attach([$user->id => ['created_by' => Auth::id()]]);
+            }
+        }
+
+        //Alert update success
+        $request->session()->flash('alert', array('Contact added successfully!', 'icon-check icons', 'success'));
+
+        if (!empty($request->input('jobcard_id'))) {
+            return redirect()->route('jobcard-show', $request->input('jobcard_id'));
+        } else {
+            return Redirect::back();
+        }
     }
 
     public function update(Request $request, $user_id)
@@ -203,7 +278,7 @@ class UserController extends Controller
         }
 
         $profile->company_id = $request->input('company_id');
-        $profile->position_id = $request->input('position_id');
+        $profile->position = $request->input('position');
 
         //If we have the image, update it as well
         if ($request->hasFile('avatar')) {

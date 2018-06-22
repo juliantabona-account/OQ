@@ -214,7 +214,7 @@
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label for="company_position">Company Position</label>
-                                                    <select id="company_position" class="form-control custom-select{{ $errors->has('company_position') ? ' is-invalid' : '' }}" name="position_id">
+                                                    <select id="company_position" class="form-control custom-select{{ $errors->has('company_position') ? ' is-invalid' : '' }}" name="position">
                                                         @foreach(Auth::user()->company->positions as $position)
                                                             <option value = "{{ $position->id }}" {{ Auth::user()->position->name == $position->name ? 'selected':'' }}>{{ $position->name }}</option>
                                                         @endforeach

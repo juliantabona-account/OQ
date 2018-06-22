@@ -21,7 +21,7 @@
         display: block;
     }
 
-    .client-logo{
+    .company-logo{
         width: auto !important;
         max-width: 80px;
         height: 80px !important;
@@ -55,7 +55,7 @@
         </a>
         <a href="/jobcards/1/viewers" class="btn btn-inverse-light mt-3 ml-2 mb-2">
             <i class="icon-eye icons"></i>
-            4 viewers
+            1 viewer
         </a>
 
         <div class="col-lg-12 d-flex flex-column">
@@ -65,35 +65,39 @@
                         <div class="card-body p-3 pt-4">
                             <div class="row">
                                 <div class="col-12">
-                                    @if($deadline > 0)
-                                        <div class="badge badge-warning">{{ $deadline == 1 ? $deadline.' day': $deadline.' days' }} until deadline</div>
-                                    @else
-                                    <div class="badge badge-danger">Deadline passed</div>
+                                    @if( $deadline !== null )
+                                        @if($deadline > 0)
+                                            <div class="badge badge-warning">{{ $deadline == 1 ? $deadline.' day': $deadline.' days' }} until deadline</div>
+                                        @else
+                                        <div class="badge badge-danger">Deadline passed</div>
+                                        @endif
                                     @endif
-                                    <nav aria-label="breadcrumb" role="navigation">
-                                        <ol class="breadcrumb breadcrumb-custom pt-2">
-                                            @if($jobcard->processInstructions)
-                                                @foreach($jobcard->processInstructions->first()->process_form as $instruction)
-                                                    <li data-toggle="tooltip" data-placement="top" title="{{ $instruction['description'] }}"
-                                                        class="breadcrumb-item progress-status-tabs{{ ($instruction['active'] || $instruction['updated']) ? ' active': '' }}" 
-                                                        data-toggle="modal" data-target="#exampleModal-{{ $instruction['id'] }}">
-                                                        <span>
-                                                                {{ $instruction['name'] }}
-                                                                @if($instruction['updated'])
-                                                                    <i class="icon-check icons"></i>
-                                                                @endif
-                                                        </span>
-                                                        <input type="hidden" class="process_step_id" value="{{ $instruction['id'] }}">
-                                                        <input type="hidden" class="plugin" value="{{ json_encode( $instruction['plugin'] ) }}">
-                                                    </li>
-                                                @endforeach
-                                                <input type="hidden" id="processInstructions" value="{{ json_encode( $jobcard->processInstructions ) }}">
+                                    @if(COUNT($jobcard->processInstructions))
+                                        <nav aria-label="breadcrumb" role="navigation">
+                                            <ol class="breadcrumb breadcrumb-custom pt-2">
+                                                    @foreach($jobcard->processInstructions->first()->process_form as $instruction)
+                                                        <li data-toggle="tooltip" data-placement="top" title="{{ $instruction['description'] }}"
+                                                            class="breadcrumb-item progress-status-tabs{{ ($instruction['active'] || $instruction['updated']) ? ' active': '' }}" 
+                                                            data-toggle="modal" data-target="#exampleModal-{{ $instruction['id'] }}">
+                                                            <span>
+                                                                    {{ $instruction['name'] }}
+                                                                    @if($instruction['updated'])
+                                                                        <i class="icon-check icons"></i>
+                                                                    @endif
+                                                            </span>
+                                                            <input type="hidden" class="process_step_id" value="{{ $instruction['id'] }}">
+                                                            <input type="hidden" class="plugin" value="{{ json_encode( $instruction['plugin'] ) }}">
+                                                        </li>
+                                                    @endforeach
+                                                    <input type="hidden" id="processInstructions" value="{{ json_encode( $jobcard->processInstructions ) }}">
+                                            </ol>
+                                            @if( $jobcardProgressPercentage !== null )
+                                                <div class="progress" data-toggle="tooltip" data-placement="top" title="{{ $jobcardProgressPercentage }}% completed">
+                                                    <div class="progress-bar" role="progressbar" style="width: {{ $jobcardProgressPercentage }}%" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
                                             @endif
-                                        </ol>
-                                        <div class="progress" data-toggle="tooltip" data-placement="top" title="{{ $jobcardProgressPercentage }}% completed">
-                                            <div class="progress-bar" role="progressbar" style="width: {{ $jobcardProgressPercentage }}%" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </nav>
+                                        </nav>
+                                    @endif
                                 </div>
                                 <div class="col-12">
                                     <h3 class="card-title mb-3 mt-4 border-bottom pb-3">{{ $jobcard->title }}</h3>
@@ -104,7 +108,7 @@
                                     <span class="lower-font">
                                         <b>End Date: </b>{{ $jobcard->end_date ? Carbon\Carbon::parse($jobcard->end_date)->format('d M Y'):'____' }}</span>
                                     <br/>
-                                    <span data-toggle="tooltip" data-placement="top" title="{{ $jobcard->category->description }}"
+                                    <span data-toggle="tooltip" data-placement="top" title="{{ $jobcard->category ? $jobcard->category->description:'____' }}"
                                           class="lower-font mr-4">
                                           <b>Catergory: </b>{{ $jobcard->category ? $jobcard->category->name:'____' }}</span>
                                     <br/>
@@ -132,14 +136,18 @@
                                         </div>
                                         <div class="col-6">
                                             <span class="lower-font">
-                                                <b>Assigned: </b><a href="/staff/1">Kgosi Mosimane</a> <a href="/jobcards/1/views/1"> - viewed(3)</a>
+                                                <b>Assigned: </b><a href="/staff/1">Tumisang Mogotsi</a> <a href="/jobcards/1/views/1"> - viewed(0)</a>
                                             </span>
                                         </div>
                                     </div>
                                     <span class="lower-font mt-3 d-block">
                                         <b>Priority: </b>
-                                        <div  data-toggle="tooltip" data-placement="top" title="{{ $jobcard->priority ? $jobcard->priority->description:'' }}"
-                                            class="badge badge-success" style="{{ $jobcard->priority ? 'background:'.$jobcard->priority->color_code.';' : '' }}">{{ $jobcard->priority ? $jobcard->priority->name:'____' }}</div>
+                                        @if($jobcard->priority)
+                                            <div  data-toggle="tooltip" data-placement="top" title="{{ $jobcard->priority->description }}"
+                                                class="badge badge-success" style="background:{{ $jobcard->priority->color_code }};">{{ $jobcard->priority ? $jobcard->priority->name:'____' }}</div>
+                                        @else
+                                            ____
+                                        @endif
                                     </span>
                                     <div>
                                         @if($jobcard->img_url)
@@ -185,53 +193,86 @@
                                             @if($jobcard->client->logo_url)
                                                 <div class="lightgallery">
                                                     <a href="{{ $jobcard->client->logo_url }}">
-                                                        <img class="client-logo img-thumbnail mb-2 p-2 rounded rounded-circle w-50" src="{{ $jobcard->client->logo_url }}" />
+                                                        <img class="company-logo img-thumbnail mb-2 p-2 rounded rounded-circle w-50" src="{{ $jobcard->client->logo_url }}" />
                                                     </a>
                                                 </div>
                                             @endif
                                             <span class="lower-font">
-                                                <b>Client Name: </b>{{ $jobcard->client->name ? $jobcard->client->name:'____' }}</span>
-                                            <span class="lower-font mb-3">
-                                                <b>City/Town: </b>{{ $jobcard->client->city ? $jobcard->client->city:'____' }}</span>
-                                                <span class="lower-font">
+                                                <b>Client Name: </b>{{ $jobcard->client->name ? $jobcard->client->name:'____' }}<br/>
+                                                <b>City/Town: </b>{{ $jobcard->client->city ? $jobcard->client->city:'____' }}<br/>
+                                                <b>Address: </b>{{ $jobcard->client->address ? $jobcard->client->address:'____' }}
+                                            </span>
+                                            <br/>
+                                            <span class="lower-font">
                                                 <b>Phone: </b>
-                                                    {{ $jobcard->client->phone_ext ? '+'.$jobcard->client->phone_ext.'-':'___-' }}
-                                                    {{ $jobcard->client->phone_num ? $jobcard->client->phone_num:'____' }}
-                                                </span>
-                                                <span class="lower-font mb-3">
-                                                <b>Email: </b>{{ $jobcard->client->city ? $jobcard->client->email:'____' }}</span>
+                                                {{ $jobcard->client->phone_ext ? '+'.$jobcard->client->phone_ext.'-':'___-' }}
+                                                {{ $jobcard->client->phone_num ? $jobcard->client->phone_num:'____' }}
+                                            </span>
+                                            <span class="lower-font mb-3">
+                                                <b>Email: </b>{{ $jobcard->client->city ? $jobcard->client->email:'____' }}
+                                            </span>
+                                            <span class="lower-font clearfix mb-3">
+                                                <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-trash"></i> Remove</a>
+                                                <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-pencil"></i> Edit</a>   
+                                            </span> 
                                         </div>
                                     </div>
 
-                                    @if(COUNT($jobcard->client->contacts))
+                                    @if($contacts->total())
                                         <div class="col-12 mb-2">
                                             <div class="bg-primary p-2 text-white">
                                                 <i class="float-left icon-user icon-sm icons ml-3 mr-2"></i>
-                                                <h6 class="card-title mb-0 ml-2 text-white">Reference Details ({{ COUNT($jobcard->client->contacts) }})</h6>
+                                                <h6 class="card-title mb-0 ml-2 text-white d-inline">Contact Details ({{ $contacts->total() }})</h6>
+                                                <a href="#" style="font-size:  12px;" class="float-right mr-1 mt-1 text-white"><i class="icon-eye"></i> View All</a>
                                             </div>
-                                            @foreach($jobcard->client->contacts as $contact)
-                                                <div class="mt-3 ml-3 reference-details">
-                                                    <span class="lower-font">
-                                                        <b>Full Name: </b>{{ $contact->first_name ? $contact->first_name:'____' }} {{ $contact->last_name ? $contact->last_name:'____' }}</span>
-                                                    <span class="border-bottom lower-font mb-1 pb-1">
-                                                        <b>Position: </b>Matron</span>
-                                                    <span class="lower-font">
-                                                        <b>Tel: </b>
-                                                        {{ $contact->mobile_ext ? '+'.$contact->mobile_ext.'-':'___-' }}
-                                                        {{ $contact->mobile_num ? $contact->mobile_num:'____' }}
-                                                    </span>
-                                                    <span class="lower-font">
-                                                        <b>Email: </b>{{ $contact->email ? $contact->email:'____' }}
-                                                    </span>
+                                            
+                                            @foreach($contacts as $contact)
+                                                <div class="mt-1 ml-2 reference-details">
+                                                    <div class=" d-flex align-items-center border-bottom p-2">
+                                                        <a class="p-0 m-0">
+                                                            <img class="img-sm rounded-circle" src="http://127.0.0.1:8000/images/profile_placeholder.svg" alt="">
+                                                        </a>
+                                                        <div class="wrapper w-100 ml-3">
+                                                            <p class="pt-2 mb-2" style="font-size:  12px;">
+                                                                <a href="#" class="mr-1">{{ $contact->first_name ? $contact->first_name:'____' }} {{ $contact->last_name ? $contact->last_name:'____' }}</a>
+                                                            </p>
+                                                            <div>
+                                                                @if($contact->position)
+                                                                    <div class="d-inline mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $contact->position ? $contact->position:'____' }}">
+                                                                        <i class="icon-info text-dark"></i>
+                                                                    </div>
+                                                                @endif
+                                                                @if($contact->phone_num)
+                                                                    <div class="d-inline mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $contact->phone_ext ? '+'.$contact->phone_ext.'-':'___-' }} {{ $contact->phone_num ? $contact->phone_num:'____' }}">
+                                                                        <i class="icon-phone text-dark"></i>
+                                                                    </div>
+                                                                @endif
+                                                                @if($contact->email)
+                                                                    <div class="d-inline" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $contact->email ? $contact->email:'____' }}">
+                                                                        <i class="icon-envelope text-dark"></i>
+                                                                    </div>
+                                                                @endif
+                                                                <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-trash"></i> Remove</a>
+                                                                <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-pencil"></i> Edit</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             @endforeach
+
+                                            <div class="float-right d-flex align-items-center justify-content-between flex-column flex-sm-row mt-4">
+                                                <nav>
+                                                    {{ $contacts->links() }}
+                                                </nav>
+                                            </div>
+
                                         </div>
                                     @endif
                                     <div class="col-12">
                                         <div data-toggle="tooltip" data-placement="top" title="Add another contact/reference working at this company or organisation" >
-                                            <button type="button" class="btn btn-success pt-3 pb-3 w-100 animated-strips" data-toggle="modal" data-target="#add-reference-modal">                                            
-                                                <i class="d-block icon-sm icon-user icons"></i>
-                                                <span class="d-block mt-3">Add Reference</span>
+                                            <button type="button" class="animated-strips btn btn-success float-right pt-3 pb-3 pl-4 pr-4 w-100" data-toggle="modal" data-target="#add-reference-modal">                                            
+                                                <i class="icon-sm icon-user icons"></i>
+                                                <span class="mt-4">Add Contact</span>
                                             </button>
                                         </div>
                                     </div>
@@ -254,60 +295,69 @@
                     <div class="card card-hoverable">
                         <div class="card-body p-3 pt-4">
                             <div class="row">
-                                @if($jobcard->select_contractor_id)
-                                    <div class="col-12">
-                                        <h3 class="card-title mb-3 mt-4">Contractors</h3>
+                                @if($contractors->total())
+                                    <div class="col-12 clearfix">
+                                        <h3 class="card-title mb-3 mt-4">Contractors ({{ $contractors->total() }})</h3>
                                         <div class="table-responsive table-hover">
                                             <table class="table mt-3 border-top">
                                                 <thead>
                                                     <tr>
+                                                        <th>Logo</th>
                                                         <th>Company Name</th>
                                                         <th style="min-width: 18%">Tel</th>
                                                         <th style="min-width: 18%">Email</th>
                                                         <th>Submitted On</th>
                                                         <th class="d-sm-none d-md-table-cell">Price</th>
-                                                        <th class="d-sm-none d-md-table-cell">Compare</th>
+                                                        <th class="d-sm-none d-md-table-cell">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class='clickable-row' data-toggle="modal" data-target="#exampleModal-2">
-                                                        <td>DropHill (PTY) LTD</td>
-                                                        <td>+267 3902321</td>
-                                                        <td>enquiries@drophill.co.bw</td>
-                                                        <td>22 May 2017</td>
-                                                        <td>P4,560.00</td>
-                                                        <td>
-                                                            <div class="badge badge-danger">Highest</div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr class='clickable-row' data-toggle="modal" data-target="#exampleModal-2">
-                                                        <td>Electrohive (PTY) LTD</td>
-                                                        <td>+267 3909218</td>
-                                                        <td>enquiries@electrohive.co.bw</td>
-                                                        <td>21 May 2017</td>
-                                                        <td>P3,820.00</td>
-                                                        <td>...</td>
-                                                    </tr>
-                                                    <tr class='clickable-row' data-toggle="modal" data-target="#exampleModal-2">
-                                                        <td>Powerdrive (PTY) LTD</td>
-                                                        <td>+267 3909895</td>
-                                                        <td>enquiries@powerdrive.co.bw</td>
-                                                        <td>20 May 2017</td>
-                                                        <td>P3,440.00</td>
-                                                        <td>
-                                                            <div class="badge badge-success">Lowest</div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr class='clickable-row' data-toggle="modal" data-target="#exampleModal-2">
-                                                        <td>Easymoves (PTY) LTD</td>
-                                                        <td>+267 3923784</td>
-                                                        <td>enquiries@easymoves.co.bw</td>
-                                                        <td>22 May 2017</td>
-                                                        <td>P3,950.00</td>
-                                                        <td>...</td>
-                                                    </tr>
+                                                    @foreach($contractors as $contractor)
+                                                        <tr class="clickable-row show-contractor-modal-btn" data-toggle="modal" data-target="#show-contractor-modal">
+                                                            <td>
+                                                                @if($contractor->logo_url)
+                                                                    <img style="max-width:50px;max-height:50px;"
+                                                                            class="company-logo img-thumbnail p-0 rounded rounded-circle w-100" src="{{ $contractor->logo_url }}" />
+                                                                @endif
+                                                            </td>
+                                                            <td class="company-name">{{ $contractor->name ? $contractor->name:'___' }}</td>
+                                                            <td class="company-phone">
+                                                                {{ $contractor->phone_ext ? '+'.$contractor->phone_ext.'-':'___-' }}
+                                                                {{ $contractor->phone_num ? $contractor->phone_num:'____' }}
+                                                            </td>
+                                                            <td class="company-email">{{ $contractor->email ? $contractor->email:'____' }}</td>
+                                                            <td class="company-created_at">{{ $contractor->pivot->created_at ? Carbon\Carbon::parse($contractor->pivot->created_at)->format('d M Y'):'____' }}</td>
+                                                            <td class="company-price">{{ $contractor->pivot->amount ? $contractor->pivot->amount:'____' }}</td>
+                                                            <td>
+                                                                <div>
+                                                                    <a href="#" style="font-size:  12px;" class="float-right mr-1">
+                                                                        <i class="icon-trash"></i> Remove
+                                                                    </a>
+                                                                    <a href="#" style="font-size:  12px;" class="float-right mr-1">
+                                                                        <i class="icon-pencil"></i> Edit
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                            <input type="hidden" class="company-quote-url" value="{{ $contractor->pivot->quotation_doc_url ? $contractor->pivot->quotation_doc_url:'' }}">
+                                                        </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 mt-2">
+                                                <nav class="float-right">
+                                                    {{ $contractors->links() }}
+                                                </nav>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                <div class="float-right" data-toggle="tooltip" data-placement="top" title="Add a contractor aligned with this job. You can add more than one">
+                                                    <button type="button" class="animated-strips btn btn-success float-right pt-3 pb-3 pl-4 pr-4" data-toggle="modal" data-target="#add-contractor-modal">                                         
+                                                        <i class="icon-briefcase icon-sm icons"></i>
+                                                        <span class="mt-4">Add Contractor</span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 @else
@@ -438,6 +488,9 @@
 
     @include('jobcard.modals.update_process_status')
     @include('jobcard.modals.add_client')
+    @include('jobcard.modals.add_contact')
+    @include('jobcard.modals.add_contractor')
+    @include('jobcard.modals.show_contractor')
 
 @endsection @section('js') 
 
@@ -457,6 +510,7 @@
             $("body").on("click",".breadcrumb-item", buildProgressModal);
             $("body").on("click","#progress-status-btn", submitProgressModal); 
 
+            // For building progress status modals
             function buildProgressModal(){
                 //Get all the progress tabs
                 var progress_tabs = $('.progress-status-tabs');
@@ -479,14 +533,15 @@
                                 //Get the build content
                                 console.log('building...'); 
                                 var pluginData = $(plugin).val();
-                                var build = JSON.parse( pluginData );
+                                var build = JSON.parse( pluginData ); 
+                                
                                 
                                 //If the build contents are available
                                 if(build != '' && build != undefined){
                                     //Prepare data fields to store
                                     var data = '';
                                     
-                                    $.each(build, function(index, tab) {
+                                    $.each(build, function(index, tab) { 
                                         //  Build for alerts
                                         if(tab.tag == "alert"){
                                             data +=  '<div class="'+(tab.full_width ? 'col-12': 'col-6' )+'">'+
@@ -609,6 +664,7 @@
 
             }
 
+            //  For validating and submitting process status modals
             function submitProgressModal(){
                 //Get the instructions of the whole complete process
                 var processInstructions = $('#processInstructions').val();
@@ -721,6 +777,8 @@
 
             }
 
+            // For capturing modal errors
+            // When the form is sumitted, this captures any issues and reopens the modal
             @if(COUNT($errors))
                 $('#{{ old('modal_id') }}').modal('show');
 
@@ -737,12 +795,15 @@
                     var msg = (count == 1) ? count+' error here': count+' errors here';
                     console.log('$(tabNavItem).text() value: ' + $(tabNavItem).text());
                     
-                    $(tabNavItem).html(
-                        tabNavText + 
-                        '<div class="badge badge-danger rounded" style="position: absolute;top: -4px;transform: rotate;">'
-                            +msg+
-                        '</div>'
-                    );
+                    //  If this is the last error in the loop, then print out the html message
+                    if(errors.length == (index+1)){
+                        $(tabNavItem).html(
+                            tabNavText + 
+                            '<div class="badge badge-danger rounded" style="position: absolute;top: -4px;transform: rotate;">'
+                                +msg+
+                            '</div>'
+                        );
+                    }
 
                     $(tabNavItem).parent('li').attr('data-error', count);
 
@@ -751,6 +812,55 @@
 
             @endif
 
+            $('.show-contractor-modal-btn').click(function() {
+                var btn = $(this);
+                $('#show-contractor-modal').on('show.bs.modal', function (event) {
+                    console.log('step 2');
+                    var company_logo = $(btn).find('.company-logo').attr('src');
+                    var company_name = $(btn).find('.company-name').text();
+                    var company_phone = $(btn).find('.company-phone').text();
+                    var company_email = $(btn).find('.company-email').text();
+                    var company_created_at = $(btn).find('.company-created_at').text();
+                    var company_price = $(btn).find('.company-price').text();
+                    var company_quote_url = $(btn).find('.company-quote-url').val();
+                    var download_quote_btn = '';
+                    
+                    $('#show-contractor-modal').find('.modal-title').html(
+                        '<span class="company-name lower-font mr-4">'+company_name+'</span><br/>'
+                    );
+
+                    $('#show-contractor-modal').find('.modal-body .col-3').html(
+                        '<div class="lightgallery">'+
+                            '<a href="'+company_logo+'">'+
+                                '<img class="company-logo img-thumbnail mb-2 p-2 rounded rounded-circle w-50" src="'+company_logo+'" />'+
+                            '</a>'+
+                        '</div>'
+                    );
+                    
+                    if(company_quote_url != '' && company_quote_url != undefined){
+                        download_quote_btn = '<p class="mt-4">'+
+                                                '<a href="'+company_quote_url+'" target="_blank" class="company-quote btn btn-primary">'+
+                                                    '<i class="icon-cloud-download icons"></i>'+
+                                                    'Quotation'+
+                                                '</a> '+
+                                              '</p>';
+                    }
+
+                    $('#show-contractor-modal').find('.modal-body .col-9').html(
+                        '<span class="company-phone lower-font mr-4"><b>Tel: </b>'+company_phone+'</span><br/>'+
+                        '<span class="company-email lower-font mr-4"><b>Email: </b>'+company_email+'</span><br/>'+
+                        '<span class="company-phone lower-font mr-4"><b>Price: </b>'+company_price+'</span><br/>'+
+                        download_quote_btn
+                    );
+
+                    $(".lightgallery").lightGallery({
+                        'share':false,
+                        'download':false,
+                        'actualSize':false
+                    }); 
+                    
+                });
+            });
         });
     </script>
 

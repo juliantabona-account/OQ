@@ -9,7 +9,7 @@
                     <div class="card card-hoverable">
                         <div class="card-body">
                             <i class="float-left icon-flag icon-sm icons ml-3"></i>
-                            <h6 class="card-title float-left mb-0 ml-2">Open Jobs</h6>
+                            <h6 class="card-title float-left mb-0 ml-2">Unpaid Jobs</h6>
                             <div class="d-flex table-responsive">
                                 <div class="btn-group ml-auto mr-2 border-0">
                                 <input type="text" class="form-control" placeholder="Search Here">

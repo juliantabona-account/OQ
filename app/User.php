@@ -18,7 +18,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'first_name', 'last_name', 'email', 'username', 'password', 'gender', 'date_of_birth', 'bio', 'address', 'phone_ext', 'phone_num',
-        'avatar', 'status', 'verifyToken', 'settings', 'tutorial_status', 'company_id', 'position_id', 'created_by',
+        'avatar', 'status', 'verifyToken', 'settings', 'tutorial_status', 'company_id', 'position', 'created_by',
     ];
 
     /**
@@ -35,14 +35,16 @@ class User extends Authenticatable
         return $this->morphMany('App\Document', 'documentable');
     }
 
-    public function company()
+    public function companyBranch()
     {
-        return $this->belongsTo('App\Company');
+        return $this->belongsTo('App\CompanyBranch', 'branch_id');
     }
 
     public function getAvatarAttribute($value)
     {
-        return $value != '' ? $value : '/images/profile_placeholder.png';
+        //  If the avatar is not empty ('', NULL, false, e.t.c) then return the avatar url
+        //  Otherwise return the default avatar placeholder
+        return !empty($value) ? $value : '/images/profile_placeholder.png';
     }
 
     /*

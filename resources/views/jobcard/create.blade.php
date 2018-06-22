@@ -104,13 +104,13 @@
                                             </div>
 
                                             <div class="col-6">
-                                                @if(Auth::user()->company->priorities)
+                                                @if(Auth::user()->companyBranch->company->priorities)
                                                     <div class="form-group">
                                                         <label for="priority">Priority:</label>
                                                         <div class="input-group mb-2">
                                                             <select data-toggle="tooltip" data-placement="top" title="Priority/Urgency of this work"
                                                                     id="priority" class="form-control{{ $errors->has('priority') ? '  is-invalid' : '' }} custom-select" name="priority">
-                                                                @foreach(Auth::user()->company->priorities as $priority)
+                                                                @foreach(Auth::user()->companyBranch->company->priorities as $priority)
                                                                     <option value = "{{ $priority->id }}" {{ old('priority') == "$priority->id" ? 'selected':'' }}>{{ $priority->name }}</option>
                                                                 @endforeach
                                                             </select>
@@ -133,13 +133,13 @@
                                             </div>
 
                                             <div class="col-6">
-                                                @if(Auth::user()->company->costCenters)
+                                                @if(Auth::user()->companyBranch->company->costCenters)
                                                     <div class="form-group">
                                                             <label for="cost_center" class="m-0 p-0 w-100">Cost Center</label>
                                                         <div class="input-group mb-2">
                                                             <select data-toggle="tooltip" data-placement="top" title="Departments/Facilities being costed doing this work"
                                                                     id="cost_center" class="form-control{{ $errors->has('cost_center') ? '  is-invalid' : '' }} custom-select" name="cost_center">
-                                                                @foreach(Auth::user()->company->costCenters as $cost_center)
+                                                                @foreach(Auth::user()->companyBranch->company->costCenters as $cost_center)
                                                                     <option value = "{{ $cost_center->id }}" {{ old('cost_center') == "$cost_center->id" ? 'selected':'' }}>{{ $cost_center->name }}</option>
                                                                 @endforeach
                                                             </select>
@@ -162,13 +162,13 @@
                                             </div>
 
                                             <div class="col-6">
-                                                @if(Auth::user()->company->categories)
+                                                @if(Auth::user()->companyBranch->company->categories)
                                                     <div class="form-group">
                                                         <label for="category" class="m-0 p-0 w-100">Job Category</label>
                                                         <div class="input-group mb-2">
                                                             <select data-toggle="tooltip" data-placement="top" title="Category that this job belongs to"
                                                                     id="category" class="form-control{{ $errors->has('category') ? '  is-invalid' : '' }} custom-select" name="category">
-                                                                @foreach(Auth::user()->company->categories as $category)
+                                                                @foreach(Auth::user()->companyBranch->company->categories as $category)
                                                                     <option value = "{{ $category->id }}" {{ old('category') == "$category->id" ? 'selected':'' }}>{{ $category->name }}</option>
                                                                 @endforeach
                                                             </select>
@@ -191,14 +191,15 @@
                                             </div>
 
                                             <div class="col-6">
-                                                @if(Auth::user()->company->branches)
+                                                @if(Auth::user()->companyBranch->company->branches)
                                                     <div class="form-group">
                                                         <label for="branch" class="m-0 p-0 w-100">Company Branch</label>
                                                         <div class="input-group mb-2">
                                                             <select data-toggle="tooltip" data-placement="top" title="Company branch/destination to do this work"
                                                                     id="branch" class="form-control{{ $errors->has('branch') ? '  is-invalid' : '' }} custom-select" name="branch">
-                                                                @foreach(Auth::user()->company->branches as $branch)
-                                                                    <option value = "{{ $branch->id }}" {{ old('branch') == "$branch->id" ? 'selected':'' }}>{{ $branch->destination }}</option>
+                                                                @foreach(Auth::user()->companyBranch->company->branches as $branch)
+                                                                    <option value = "{{ $branch->id }}" 
+                                                                        {{ old('branch') == "$branch->id" ? 'selected':'' }}>{{ $branch->destination }}</option>
                                                                 @endforeach
                                                             </select>
                                                             <div class="input-group-prepend">
@@ -408,7 +409,7 @@
             var desc = $('#select-option-creation-desc').val();
             var color = $('#select-option-creation-color').val();
             var type = $('#select-option-creation-box .modal-body input[type="hidden"]').val();
-            var new_option = '<option value = "'+title+'%&%&'+desc+'%&%&'+color+'" selected>'+title+'</option>';
+            var new_option = '<option value = "'+title+'_&_'+desc+'_&_'+color+'" selected>'+title+'</option>';
             
             //Check if we have what we need
             if( (title != '' && desc != '' && type != 'branch') ||

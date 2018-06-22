@@ -21,13 +21,12 @@ class CreateCompaniesTable extends Migration
             $table->integer('industry')->unsigned()->nullable();
             $table->integer('type')->unsigned()->nullable();
             $table->string('website_link')->nullable();
-            $table->string('profile_doc_url');
+            $table->string('profile_doc_url')->nullable();
             $table->string('logo_url')->nullable();
             $table->string('phone_ext')->nullable();
             $table->string('phone_num')->nullable();
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->integer('created_by')->unsigned()->nullable();
-            $table->integer('company_id')->unsigned()->nullable();
             $table->timestamps();
         });
     }

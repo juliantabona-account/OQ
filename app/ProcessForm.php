@@ -24,9 +24,4 @@ class ProcessForm extends Model
     protected $fillable = [
         'company_id', 'type', 'selected', 'instructions', 'created_by',
     ];
-
-    public function steps()
-    {
-        return $this->hasMany('App\ProcessFormSteps', 'process_form_id');
-    }
 }

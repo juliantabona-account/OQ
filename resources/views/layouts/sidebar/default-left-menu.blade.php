@@ -87,23 +87,10 @@
             </a>
         </li>
         <li class="nav-item">
-            <a data-toggle="collapse" href="#page-layouts" aria-expanded="false" aria-controls="page-layouts" class="nav-link">
+            <a href="#" class="nav-link">
                 <i class="icon-pie-chart menu-icon text-dark"></i>
                 <span class="menu-title text-dark">Reports</span>
             </a>
-            <div id="page-layouts" class="collapse">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item d-none d-lg-block">
-                        <a href="pages/layout/boxed-layout.html" class="nav-link">Boxed</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="pages/layout/rtl-layout.html" class="nav-link">RTL</a>
-                    </li>
-                    <li class="nav-item d-none d-lg-block">
-                        <a href="pages/layout/horizontal-menu.html" class="nav-link">Horizontal Menu</a>
-                    </li>
-                </ul>
-            </div>
         </li>
         <li class="nav-item nav-doc m-0">
             <a href="pages/documentation.html" class="nav-link bg-primary">
@@ -114,13 +101,13 @@
 
 
         <li class="nav-item">
-            <a href="/access-control" class="nav-link">
+            <a href="#" class="nav-link">
                 <i class="icon-user menu-icon text-dark"></i>
                 <span class="menu-title text-dark">Accounts</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="/access-control" class="nav-link">
+            <a href="#" class="nav-link">
                 <i class="icon-key menu-icon text-dark"></i>
                 <span class="menu-title text-dark">Roles/Permissions</span>
             </a>

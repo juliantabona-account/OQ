@@ -21824,23 +21824,27 @@ i.dropdown-arrow.icon-arrow-down.icons.text-white {}
   padding: .4rem 0;
 }
 
-.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td.day.today:before, .datepicker.datepicker-inline .datepicker-days table.table-condensed tbody td.day.today:before,
-.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td.day.active:before, .datepicker.datepicker-inline .datepicker-days table.table-condensed tbody td.day.active:before {
+.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td.day.today:before, 
+.datepicker.datepicker-inline .datepicker-days table.table-condensed tbody td.day.today:before, 
+.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td.day.active:before, 
+.datepicker.datepicker-inline .datepicker-days table.table-condensed tbody td.day.active:nth-child(odd):before {
   width: 30px !important;
   height: 30px !important;
+  left: 0px !important;
 }
 
-.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td:nth-child(1).day.active:before {
-  width: 30px !important;
-  height: 30px !important;
-  left: -16px !important;
-}
-
-.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td:nth-child(7).day.active:before,
-.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td.today:before {
+.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td:nth-child(7n+7).day.active:before,
+.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td:nth-child(7n+7).day.today:before{
     width: 30px !important;
     height: 30px !important;
     left: 10px !important;
+}
+
+.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td:nth-child(1).day.active:before,
+.datepicker.datepicker-dropdown .datepicker-days table.table-condensed tbody td:nth-child(8n+1).today:before {
+  width: 30px !important;
+  height: 30px !important;
+  left: -16px !important;
 }
 
 .asColorPicker-dropdown {
