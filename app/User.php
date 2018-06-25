@@ -30,6 +30,12 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function recentActivity()
+    {
+        return $this->morphMany('App\RecentActivity', 'trackable')
+                    ->orderBy('created_at', 'desc');
+    }
+
     public function documents()
     {
         return $this->morphMany('App\Document', 'documentable');

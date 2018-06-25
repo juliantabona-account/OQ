@@ -9,6 +9,7 @@ use Redirect;
 use Validator;
 use App\User;
 use App\Company;
+use App\Jobcard;
 use App\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -101,6 +102,14 @@ class UserController extends Controller
                 //Save the contact to the client company
                 $client = Company::find($request->input('client_id'));
                 $client->contacts()->attach([$user->id => ['created_by' => Auth::id()]]);
+                //  Record contact added to company activity
+                $companyActivity = $client->recentActivity()->create([
+                    'activity' => [
+                                    'type' => 'contact_added',
+                                    'contact' => $user,
+                                ],
+                    'created_by' => Auth::id(),
+                ]);
             }
         }
 
@@ -108,6 +117,16 @@ class UserController extends Controller
         $request->session()->flash('alert', array('Contact added successfully!', 'icon-check icons', 'success'));
 
         if (!empty($request->input('jobcard_id'))) {
+            //  Record contact added at this jobcard
+            $jobcard = Jobcard::find($request->input('jobcard_id'));
+            $jobcardActivity = $jobcard->recentActivity()->create([
+                'activity' => [
+                                'type' => 'contact_added',
+                                'contact' => $user,
+                            ],
+                'created_by' => Auth::id(),
+            ]);
+
             return redirect()->route('jobcard-show', $request->input('jobcard_id'));
         } else {
             return Redirect::back();

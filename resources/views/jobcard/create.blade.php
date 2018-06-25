@@ -393,6 +393,12 @@
                 $('#select-option-desc-box').show();
             }
 
+            if(name_field == 'priority'){
+                $('#select-option-color-box').show();
+            }else{
+                $('#select-option-color-box').hide();
+            }
+
             $('#select-option-creation-name').attr('data-original-title', modalInputNameToolTip).attr('placeholder', name_field_uppercase+' name...');
             $('#select-option-creation-desc').attr('data-original-title', modalInputDescToolTip).attr('placeholder', name_field_uppercase+' description...');
 

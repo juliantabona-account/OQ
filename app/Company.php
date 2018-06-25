@@ -17,6 +17,12 @@ class Company extends Model
         'profile_doc_url', 'logo_url', 'phone_ext', 'phone_num', 'email', 'created_by',
     ];
 
+    public function recentActivity()
+    {
+        return $this->morphMany('App\RecentActivity', 'trackable')
+                    ->orderBy('created_at', 'desc');
+    }
+
     public function documents()
     {
         return $this->morphMany('App\Document', 'documentable');

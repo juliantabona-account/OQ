@@ -21,6 +21,12 @@ class Jobcard extends Model
         return $this->morphMany('App\View', 'viewable');
     }
 
+    public function recentActivity()
+    {
+        return $this->morphMany('App\RecentActivity', 'trackable')
+                    ->orderBy('created_at', 'desc');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo('App\User', 'created_by');
@@ -59,7 +65,7 @@ class Jobcard extends Model
     public function contractorsList()
     {
         return $this->belongsToMany('App\Company', 'jobcard_contractors', 'jobcard_id', 'contractor_id')
-                    ->withPivot('jobcard_id', 'contractor_id', 'amount', 'quotation_doc_url')
+                    ->withPivot('id', 'jobcard_id', 'contractor_id', 'amount', 'quotation_doc_url')
                     ->withTimestamps();
     }
 

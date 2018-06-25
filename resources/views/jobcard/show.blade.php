@@ -34,15 +34,6 @@
         padding: 20px 15px;
     }
 
-    .animated-strips,
-    .animated-strips:hover {
-        background-size: 30px 30px;
-        background-image: -webkit-linear-gradient(135deg,#f6f6f630 25%,transparent 25%,transparent 50%,#f6f6f630 50%,#f6f6f630 75%,transparent 75%,transparent);
-        background-image: linear-gradient(-45deg,#f6f6f630 25%,transparent 25%,transparent 50%,#f6f6f630 50%,#f6f6f630 75%,transparent 75%,transparent);
-        -webkit-animation: stripes 2s linear infinite;
-        animation: stripes 2s linear infinite;
-    }
-
 </style>
 
 @endsection 
@@ -212,8 +203,16 @@
                                                 <b>Email: </b>{{ $jobcard->client->city ? $jobcard->client->email:'____' }}
                                             </span>
                                             <span class="lower-font clearfix mb-3">
-                                                <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-trash"></i> Remove</a>
+                                                <form method="POST" action="{{ route('jobcard-remove-client', [$jobcard->id, $jobcard->client_id]) }}" class="d-inline">
+                                                    {{ method_field('DELETE') }}
+                                                    @csrf
+                                                    <button type="submit" style="font-size:  12px;" class="btn-link float-right mr-1">
+                                                        <i class="icon-trash"></i> 
+                                                        Remove
+                                                    </button>
+                                                </form>
                                                 <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-pencil"></i> Edit</a>   
+                                                <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-refresh"></i> Change Client</a>
                                             </span> 
                                         </div>
                                     </div>
@@ -330,9 +329,14 @@
                                                             <td class="company-price">{{ $contractor->pivot->amount ? $contractor->pivot->amount:'____' }}</td>
                                                             <td>
                                                                 <div>
-                                                                    <a href="#" style="font-size:  12px;" class="float-right mr-1">
-                                                                        <i class="icon-trash"></i> Remove
-                                                                    </a>
+                                                                    <form method="POST" action="{{ route('jobcard-remove-contractor', [$jobcard->id, $contractor->id, $contractor->pivot->id]) }}" class="d-inline">
+                                                                        {{ method_field('DELETE') }}
+                                                                        @csrf
+                                                                        <button type="submit" style="font-size:  12px;" class="btn-link float-right mr-1">
+                                                                            <i class="icon-trash"></i> 
+                                                                            Remove
+                                                                        </button>
+                                                                    </form>
                                                                     <a href="#" style="font-size:  12px;" class="float-right mr-1">
                                                                         <i class="icon-pencil"></i> Edit
                                                                     </a>
@@ -378,106 +382,27 @@
                 <div class="col-12 col-md-12 col-lg-12 grid-margin stretch-card">
                     <div class="card card-hoverable">
                         <div class="card-body">
-                            <h4 class="card-title text-center">Jobcard Timeline</h4>
-                            <div>
-                                <p class="mt-3 p-2 text-center">Today</p>
-                                <div class="timeline">
-                                    <div class="timeline-wrapper timeline-inverted timeline-wrapper-primary">
-                                        <div class="timeline-badge"></div>
-                                        <div class="timeline-panel">
-                                            <div class="timeline-body">
-                                                <p>Status update from
-                                                    <b>Job Started</b> to
-                                                    <b>Closed</b> by
-                                                    <a href="#">Tebogo Mosinyi</a>
-                                                </p>
-                                            </div>
-                                            <div class="timeline-footer d-flex align-items-center">
-                                                <span class="ml-auto font-weight-bold mt-2">
-                                                    <i class="icon-clock icons"></i> 21 Jun 2017 09:28AM</span>
-                                            </div>
-                                        </div>
+                            @if( COUNT($jobcard->recentActivity) )
+                                <h4 class="card-title text-center">Jobcard Timeline</h4>
+                                <div>
+                                    <p class="mt-3 p-2 text-center">Today</p>
+                                    <div class="timeline">
+                                        @foreach($jobcard->recentActivity as $position => $recentActivity)
+                                            
+                                            @include('layouts.recentActivity.default-activity-layout')
+
+                                        @endforeach
                                     </div>
-                                    <div class="timeline-wrapper timeline-wrapper-primary">
-                                        <div class="timeline-badge"></div>
-                                        <div class="timeline-panel">
-                                            <div class="timeline-body">
-                                                <p>Status update from
-                                                    <b>Deposit Paid</b> to
-                                                    <b>Job Started</b> by
-                                                    <a href="#">Tebogo Mosinyi</a>
-                                                </p>
-                                            </div>
-                                            <div class="timeline-footer d-flex align-items-center">
-                                                <span class="ml-auto font-weight-bold mt-2">
-                                                    <i class="icon-clock icons"></i> 20 Jun 2017 12:55PM</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-wrapper timeline-inverted timeline-wrapper-primary">
-                                        <div class="timeline-badge"></div>
-                                        <div class="timeline-panel">
-                                            <div class="timeline-body">
-                                                <p>Status update from
-                                                    <b>Open</b> to
-                                                    <b>Deposit Paid</b> by
-                                                    <a href="#">Tebogo Mosinyi</a>
-                                                </p>
-                                            </div>
-                                            <div class="timeline-footer d-flex align-items-center">
-                                                <span class="ml-auto font-weight-bold mt-2">
-                                                    <i class="icon-clock icons"></i> 19 Jun 2017 08:12AM</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-wrapper timeline-wrapper-primary">
-                                        <div class="timeline-badge"></div>
-                                        <div class="timeline-panel">
-                                            <div class="timeline-body">
-                                                <p>
-                                                    <b>Authorised</b> by
-                                                    <a href="#">Poloko Maphalala</a>
-                                                </p>
-                                            </div>
-                                            <div class="timeline-footer d-flex align-items-center">
-                                                <span class="ml-auto font-weight-bold mt-2">
-                                                    <i class="icon-clock icons"></i> 18 Jun 2017 13:45PM</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-wrapper timeline-inverted timeline-wrapper-primary">
-                                        <div class="timeline-badge"></div>
-                                        <div class="timeline-panel">
-                                            <div class="timeline-body">
-                                                <p>
-                                                    <b>Edited</b> by
-                                                    <a href="#">Lesley Mosinyi</a>
-                                                </p>
-                                            </div>
-                                            <div class="timeline-footer d-flex align-items-center">
-                                                <span class="ml-auto font-weight-bold mt-2">
-                                                    <i class="icon-clock icons"></i> 17 Jun 2017 11:22AM</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="timeline-wrapper timeline-wrapper-primary">
-                                        <div class="timeline-badge"></div>
-                                        <div class="timeline-panel">
-                                            <div class="timeline-body">
-                                                <p>
-                                                    <b>Created</b> by
-                                                    <a href="#">Kgosi Mosimane</a>
-                                                </p>
-                                            </div>
-                                            <div class="timeline-footer d-flex align-items-center">
-                                                <span class="ml-auto font-weight-bold mt-2">
-                                                    <i class="icon-clock icons"></i> 15 Jun 2017 09:05AM</span>
-                                            </div>
-                                        </div>
+                                    <p class="mt-3 p-2 text-center">Start</p>
+                                </div>
+                            @else
+                                <div class="col-4 offset-4">
+                                    <div class="mt-3 text-center">
+                                        <i class="icon-ghost icon-sm icons ml-3"></i>
+                                        <h6 class="card-title mt-2 mb-3 ml-2">Sorry, no recent activity found</h6>
                                     </div>
                                 </div>
-                                <p class="mt-3 p-2 text-center">Start</p>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -669,11 +594,16 @@
                 //Get the instructions of the whole complete process
                 var processInstructions = $('#processInstructions').val();
                 var pluginPosition = $('#plugin_step').val();
+
                 //Get the current build
                 var selectedTab = $('.progress-status-tabs')[pluginPosition];
                 var build = JSON.parse( $(selectedTab).find('.plugin').val() );
                 var upload, value = [], responses = [], errors = 0, errorHeading;
-                
+
+                //Get the tab names
+                var selectedTabText = $(selectedTab).find('span').text().trim();
+                var activeTabText = $('.progress-status-tabs.active:last').find('span').text().trim();
+
                 //Get all the fillable data input fields
                 var dataFields = $('#progress-status-modal').find('.fillable');
 
@@ -761,13 +691,14 @@
                         //  Update the new process instructions data using the build information
                         var updatedProcessInstructions = JSON.parse( processInstructions );
                         updatedProcessInstructions[0]['process_form'][pluginPosition]['plugin'] = build;
-
+                        
                         $('#progress-status-modal .modal-body')
-                            .append('<input type="hidden" name="updated_process_instructions" value="'+ encodeURIComponent(JSON.stringify( updatedProcessInstructions )) +'">');
+                            .append('<input type="hidden" name="updated_process_instructions" value="'+ encodeURIComponent(JSON.stringify( updatedProcessInstructions )) +'">')
+                            .append('<input type="hidden" name="old_step_name" value="'+ activeTabText +'">')
+                            .append('<input type="hidden" name="new_step_name" value="'+ selectedTabText +'">');
                         
                         //  Submit the form and make button show loading state
                         //  "makeSubmitableBtn()" is found in js/custom/misc.js
-
                         makeSubmitableBtn(this);  
 
                         //$( "#progress-status-form" ).submit();

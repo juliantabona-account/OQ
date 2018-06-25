@@ -66,6 +66,8 @@ Route::group(['prefix' => 'jobcards',  'middleware' => 'auth'], function () {
 
     Route::put('/{jobcard_id}/progress', 'JobcardController@updateProgress')->name('jobcard-update-progress');
     //Route::get('/{jobcard_id}/edit', 'JobcardController@edit')->name('jobcard-edit');
+    Route::delete('/{jobcard_id}/client/{client_id}', 'JobcardController@removeClient')->name('jobcard-remove-client');
+    Route::delete('/{jobcard_id}/contractors/{contractor_id}/{pivot_id}', 'JobcardController@removeContractor')->name('jobcard-remove-contractor');
 
     /*  REMOVE THIS-> */
     /*  REMOVE THIS-> */

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Auth;
 use Image;
 use Storage;
@@ -10,6 +11,7 @@ use Validator;
 use App\View;
 use App\Jobcard;
 use App\Priority;
+use App\Company;
 use App\CompanyBranch;
 use Illuminate\Http\Request;
 use App\ProcessFormAllocation;
@@ -121,6 +123,8 @@ class JobcardController extends Controller
             }
 
             return view('jobcard/show', compact('jobcard', 'deadline', 'jobcardProgressPercentage', 'contacts', 'contractors'));
+        } else {
+            return view('jobcard/no_jobcard');
         }
     }
 
@@ -314,9 +318,16 @@ class JobcardController extends Controller
             $process = $jobcard->processInstructions()->create([
                 'process_form' => Auth::user()->companyBranch->company->processForms()->where('selected', 1)->first()->instructions,
             ]);
-
+            //  Recoord the creator of the jobcard as the first viewer
             $jobcardView = $jobcard->views()->create([
                 'viewed_by' => Auth::id(),
+            ]);
+
+            $jobcardActivity = $jobcard->recentActivity()->create([
+                'activity' => [
+                                'type' => 'created',
+                            ],
+                'created_by' => Auth::id(),
             ]);
         }
 
@@ -332,6 +343,51 @@ class JobcardController extends Controller
 
     public function delete()
     {
+    }
+
+    public function removeClient(Request $request, $jobcard_id, $client_id)
+    {
+        $jobcard = Jobcard::find($jobcard_id);
+        $company = Company::find($client_id);
+
+        if ($jobcard) {
+            $jobcard->client_id = null;
+            $jobcard->save();
+            //Alert update success
+            $request->session()->flash('alert', array('Client removed successfully!', 'icon-trash icons', 'success'));
+
+            $jobcardActivity = $jobcard->recentActivity()->create([
+                'activity' => [
+                    'type' => 'client_removed',
+                    'company' => $company,
+                ],
+                'created_by' => Auth::id(),
+            ]);
+        }
+
+        return redirect()->route('jobcard-show', [$jobcard_id]);
+    }
+
+    public function removeContractor(Request $request, $jobcard_id, $contractor_id, $pivot_id)
+    {
+        $jobcard = Jobcard::find($jobcard_id);
+        $company = Company::find($contractor_id);
+
+        if ($jobcard) {
+            $deleted = DB::table('jobcard_contractors')->where('id', $pivot_id)->delete();
+            //Alert update success
+            $request->session()->flash('alert', array('Contractor removed successfully!', 'icon-trash icons', 'success'));
+
+            $jobcardActivity = $jobcard->recentActivity()->create([
+                'activity' => [
+                    'type' => 'contractor_removed',
+                    'company' => $company,
+                ],
+                'created_by' => Auth::id(),
+            ]);
+        }
+
+        return redirect()->route('jobcard-show', [$jobcard_id]);
     }
 
     public function updateProgress(Request $request, $jobcard_id)
@@ -370,6 +426,17 @@ class JobcardController extends Controller
 
         $update = $jobcardProcessInstructions->update([
             'process_form' => $updatedProcessInstructions[0]['process_form'],
+        ]);
+
+        //  Record new activity
+        $jobcard = Jobcard::find($jobcard_id);
+        $jobcardActivity = $jobcard->recentActivity()->create([
+            'activity' => [
+                'type' => 'status_changed',
+                'old_status' => $request->input('old_step_name'),
+                'new_status' => $request->input('new_step_name'),
+            ],
+            'created_by' => Auth::id(),
         ]);
 
         //Return to the jobcard

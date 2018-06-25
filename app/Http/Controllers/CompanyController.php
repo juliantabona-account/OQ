@@ -128,18 +128,33 @@ class CompanyController extends Controller
 
         //If the company was created successfully
         if ($company) {
+            $companyActivity = $company->recentActivity()->create([
+                'activity' => [
+                                'type' => 'created',
+                                'company' => $company,
+                            ],
+                'created_by' => Auth::id(),
+            ]);
+
             //  If we have the jobcard ID
             if (!empty($request->input('jobcard_id'))) {
-                //Save the company to the jobcard if we are adding a client
+                //Get the associated jobcard
+                $jobcard = Jobcard::find($request->input('jobcard_id'));
+                //  If we are adding a new client
                 if ($request->input('new_company_type') == 'client') {
-                    $jobcard = Jobcard::find($request->input('jobcard_id'));
+                    //  Save the company to the jobcard as the current client
                     $jobcard->client_id = $company->id;
                     $jobcard->save();
-                }
-
-                if ($request->input('new_company_type') == 'client') {
                     //  Save the company as part of the companies client directory
                     $jobcard->owningBranch->company->clients()->attach([$company->id => ['created_by' => Auth::id()]]);
+
+                    $jobcardActivity = $jobcard->recentActivity()->create([
+                        'activity' => [
+                                        'type' => 'client_added',
+                                        'company' => $company,
+                                    ],
+                        'created_by' => Auth::id(),
+                    ]);
                 } elseif ($request->input('new_company_type') == 'contractor') {
                     //  Save the company as part of the companies contractor directory
                     $jobcard->owningBranch->company->contractors()->attach([$company->id => ['created_by' => Auth::id()]]);
@@ -163,6 +178,14 @@ class CompanyController extends Controller
                         'quotation_doc_url' => $doc_file_url,
                         'created_by' => Auth::id(),
                     ]]);
+
+                    $jobcardActivity = $jobcard->recentActivity()->create([
+                        'activity' => [
+                                        'type' => 'contractor_added',
+                                        'company' => $company,
+                                    ],
+                        'created_by' => Auth::id(),
+                    ]);
                 }
             }
         }
