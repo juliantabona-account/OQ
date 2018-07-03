@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{ asset('css/plugins/lightgallery/dist/css/lightgallery.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/plugins/dropify/dist/css/dropify.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/plugins/icheck/skins/all.css') }}">
 
 <style>
 
@@ -34,6 +35,28 @@
         padding: 20px 15px;
     }
 
+    .process_notice {
+        color: #ffab00;
+        font-size: 25px;
+        position: absolute;
+        top: -13px;
+        right: 15px;
+    }
+
+    .process_notice > a{
+        position: absolute;
+        font-size: 14px;
+        top: 8px;
+        right: 0;
+    }
+
+    .process_notice > i {
+        top: 0;
+        right: 68px;
+        position: absolute;
+        animation: beat 0.5s infinite alternate;
+    }
+
 </style>
 
 @endsection 
@@ -57,12 +80,16 @@
                             <div class="row">
                                 <div class="col-12">
                                     @if( $deadline !== null )
-                                        @if($deadline > 0)
+                                        @if($deadline >= 0)
                                             <div class="badge badge-warning">{{ $deadline == 1 ? $deadline.' day': $deadline.' days' }} until deadline</div>
                                         @else
                                         <div class="badge badge-danger">Deadline passed</div>
                                         @endif
                                     @endif
+                                    <span class="process_notice">
+                                        <i class="icon-exclamation icons"></i>
+                                        <a href="#" class="text-warning">Authorize</a>
+                                    </span>
                                     @if(COUNT($jobcard->processInstructions))
                                         <nav aria-label="breadcrumb" role="navigation">
                                             <ol class="breadcrumb breadcrumb-custom pt-2">
@@ -80,6 +107,7 @@
                                                             <input type="hidden" class="plugin" value="{{ json_encode( $instruction['plugin'] ) }}">
                                                         </li>
                                                     @endforeach
+                                                    
                                                     <input type="hidden" id="processInstructions" value="{{ json_encode( $jobcard->processInstructions ) }}">
                                             </ol>
                                             @if( $jobcardProgressPercentage !== null )
@@ -91,9 +119,9 @@
                                     @endif
                                 </div>
                                 <div class="col-12">
-                                    <h3 class="card-title mb-3 mt-4 border-bottom pb-3">{{ $jobcard->title }}</h3>
+                                    <h3 class="card-title mb-3 mt-4 border-bottom pb-3">{{ $jobcard->title ? $jobcard->title:'____' }}</h3>
                                     <b>Description: </b>
-                                    <p class="mt-2">{{ $jobcard->description }}</p>
+                                    <p class="mt-2">{{ $jobcard->description ? $jobcard->description:'____' }}</p>
                                     <span class="lower-font mr-4">
                                         <b>Start Date: </b>{{ $jobcard->start_date ? Carbon\Carbon::parse($jobcard->start_date)->format('d M Y'):'____' }}</span>
                                     <span class="lower-font">
@@ -156,7 +184,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group mt-0">
-                                        <a class="btn btn-primary mr-2 float-right" href="/downloadables/jobcard-default.pdf" target="_blank" class="btn btn-primary">
+                                        <a class="btn btn-primary mr-2 float-right" href="{{ route('jobcard-download-pdf', [$jobcard->id]) }}" target="_blank" class="btn btn-primary">
                                             <i class="icon-cloud-download icons"></i>
                                             Download Jobcard
                                         </a>
@@ -211,8 +239,9 @@
                                                         Remove
                                                     </button>
                                                 </form>
-                                                <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-pencil"></i> Edit</a>   
+                                                <a href="{{ route('company-edit', $jobcard->client_id) }}" style="font-size:  12px;" class="float-right mr-1"><i class="icon-pencil"></i> Edit</a>   
                                                 <a href="#" style="font-size:  12px;" class="float-right mr-1"><i class="icon-refresh"></i> Change Client</a>
+                                                <a href="{{ route('client-show', [$jobcard->client_id]) }}" style="font-size:  12px;" class="float-right mr-1"><i class="icon-eye"></i> View</a>
                                             </span> 
                                         </div>
                                     </div>
@@ -296,11 +325,12 @@
                             <div class="row">
                                 @if($contractors->total())
                                     <div class="col-12 clearfix">
-                                        <h3 class="card-title mb-3 mt-4">Contractors ({{ $contractors->total() }})</h3>
+                                        <h4 class="card-title mb-3 mt-4 ml-2">Potential Contractors ({{ $contractors->total() }})</h4>
                                         <div class="table-responsive table-hover">
                                             <table class="table mt-3 border-top">
                                                 <thead>
                                                     <tr>
+                                                        <td>Choose</td>
                                                         <th>Logo</th>
                                                         <th>Company Name</th>
                                                         <th style="min-width: 18%">Tel</th>
@@ -313,6 +343,19 @@
                                                 <tbody>
                                                     @foreach($contractors as $contractor)
                                                         <tr class="clickable-row show-contractor-modal-btn" data-toggle="modal" data-target="#show-contractor-modal">
+                                                            <td>
+                                                                <form method="POST" action="{{ route('jobcard-select-contractor', [$jobcard->id, $contractor->id]) }}" enctype="multipart/form-data">
+                                                                    {{ method_field('PUT') }}
+                                                                    @csrf
+
+                                                                    @if(!empty($jobcard->select_contractor_id) && $jobcard->select_contractor_id == $contractor->id)
+                                                                        <input class="icheck" type="checkbox" name="selected_contractor" checked>
+                                                                    @else
+                                                                        <input class="icheck" type="checkbox" name="selected_contractor">
+                                                                    @endif
+
+                                                                </form>
+                                                            </td>
                                                             <td>
                                                                 @if($contractor->logo_url)
                                                                     <img style="max-width:50px;max-height:50px;"
@@ -342,6 +385,7 @@
                                                                     </a>
                                                                 </div>
                                                             </td>
+                                                            <input type="hidden" class="company-id" value="{{ $contractor->id ? $contractor->id:'' }}">
                                                             <input type="hidden" class="company-quote-url" value="{{ $contractor->pivot->quotation_doc_url ? $contractor->pivot->quotation_doc_url:'' }}">
                                                         </tr>
                                                     @endforeach
@@ -382,12 +426,12 @@
                 <div class="col-12 col-md-12 col-lg-12 grid-margin stretch-card">
                     <div class="card card-hoverable">
                         <div class="card-body">
-                            @if( COUNT($jobcard->recentActivity) )
+                            @if( COUNT($jobcard->recentActivities) )
                                 <h4 class="card-title text-center">Jobcard Timeline</h4>
                                 <div>
                                     <p class="mt-3 p-2 text-center">Today</p>
                                     <div class="timeline">
-                                        @foreach($jobcard->recentActivity as $position => $recentActivity)
+                                        @foreach($jobcard->recentActivities as $position => $recentActivity)
                                             
                                             @include('layouts.recentActivity.default-activity-layout')
 
@@ -423,9 +467,21 @@
     <script src="{{ asset('js/custom/dropify.js') }}"></script>
     <script src="{{ asset('js/plugins/lightgallery/dist/js/lightgallery-all.min.js') }}"></script>
     <script src="{{ asset('js/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/icheck/icheck.min.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
+
+            $('input.icheck').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square',
+                increaseArea: '20%' // optional
+              });
+
+              $('input.icheck').on('ifToggled', function(event){
+                $(this).closest('form').submit();
+              });
+
             $(".lightgallery").lightGallery({
                 'share':false,
                 'download':false,
@@ -746,7 +802,7 @@
             $('.show-contractor-modal-btn').click(function() {
                 var btn = $(this);
                 $('#show-contractor-modal').on('show.bs.modal', function (event) {
-                    console.log('step 2');
+                    var company_id = $(btn).find('.company-id').val();
                     var company_logo = $(btn).find('.company-logo').attr('src');
                     var company_name = $(btn).find('.company-name').text();
                     var company_phone = $(btn).find('.company-phone').text();
@@ -784,6 +840,8 @@
                         download_quote_btn
                     );
 
+                    $('#show-contractor-modal .modal-footer').find('a').attr('href', '/contractors/'+company_id)
+
                     $(".lightgallery").lightGallery({
                         'share':false,
                         'download':false,
@@ -792,6 +850,7 @@
                     
                 });
             });
+            
         });
     </script>
 

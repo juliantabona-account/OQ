@@ -10,8 +10,10 @@
             </div>
             <form method="POST" action="{{ route('profile-store') }}" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" value="{{ $jobcard->id }}" name="jobcard_id">
-                <input type="hidden" value="{{ $jobcard->client_id }}" name="client_id">
+                @if( !empty($jobcard) ){
+                    <input type="hidden" value="{{ $jobcard->id }}" name="jobcard_id">
+                    <input type="hidden" value="{{ $jobcard->client_id }}" name="client_id">
+                @endif
                 <input type="hidden" value="add-reference-modal" name="modal_id">
                 <div class="modal-body pt-3">
 

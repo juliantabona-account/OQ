@@ -3,7 +3,7 @@
 @section('content')
         <div class="row">
             <div class="col-md-12 col-lg-12">
-                <div class="row">
+                <div class="row overview-summary">
                     <div class="col-md-12 col-lg-12 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body p-3">
@@ -11,109 +11,107 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-                        <div class="card card-clickable" data-href='/jobcards'>
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-md-center">
-                                    <i class="icon-lg icon-flag icons"></i>
-                                    <div class="ml-3">
-                                        <p class="mb-0">Open Jobs</p>
-                                        <h6>48</h6>
+                    @foreach($jobcardProcessSteps as $processStep)
+                        <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                            <div class="card card-clickable" data-href="{{ route('show-step-jobcard', [$processStep->id]) }}">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-md-center">
+                                        <i class="icon-lg {{ $processStep->step_instruction['icon'] }}"></i>
+                                        <div class="ml-3">
+                                            <p class="mb-0">{{ $processStep->step_instruction['name'] }}</p>
+                                            <h6>{{ $processStep->jobcards->count() }}</h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-                        <div class="card card-clickable" data-href='/jobcards/pending'>
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-md-center">
-                                    <i class="icon-lg icon-refresh icons"></i>
-                                    <div class="ml-3">
-                                        <p class="mb-0">Pending Jobs</p>
-                                        <h6>19</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-                        <div class="card card-clickable" data-href='/jobcards/unpaid'>
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-md-center">
-                                    <i class="icon-wallet icons icon-lg"></i>
-                                    <div class="ml-3">
-                                        <p class="mb-0">Unpaid Jobs</p>
-                                        <h6>22</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
+                    @endforeach
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                         <div class="card card-clickable" data-href='/jobcards/overdue'>
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-md-center">
                                     <i class="icon-exclamation icons icon-lg"></i>
                                     <div class="ml-3">
                                         <p class="mb-0">Overdue Jobs</p>
-                                        <h6>12</h6>
+                                        <h6>---</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-12 col-lg-12">
-                <div class="row">
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-                        <div class="card card-clickable">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-md-center">
-                                    <i class="icon-emotsmile icons icon-lg"></i>
-                                    <div class="ml-3">
-                                        <p class="mb-0">Closed Jobs</p>
-                                        <h6>36</h6>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                            <div class="card card-clickable" data-href='/jobcards/overdue'>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-md-center">
+                                        <i class="icon-social-dropbox icons icon-lg"></i>
+                                        <div class="ml-3">
+                                            <p class="mb-0">UnAuthorized</p>
+                                            <h6>---</h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-                        <div class="card card-clickable">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-md-center">
-                                    <i class="icon-layers icons icon-lg"></i>
-                                    <div class="ml-3">
-                                        <p class="mb-0">Reopened Jobs</p>
-                                        <h6>12</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                         <div class="card card-clickable" data-href='/clients'>
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-md-center">
-                                    <i class="icon-lg icon-user-follow icons"></i>
+                                    <i class="icon-lg icon-emotsmile icons"></i>
                                     <div class="ml-3">
                                         <p class="mb-0">Clients</p>
-                                        <h6>48</h6>
+                                        <h6>{{ $clientsCount }}</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3 grid-margin stretch-card">
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                         <div class="card card-clickable" data-href='/contractors'>
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-md-center">
                                     <i class="icon-lg icon-briefcase icons"></i>
                                     <div class="ml-3">
                                         <p class="mb-0">Contractors</p>
-                                        <h6>19</h6>
+                                        <h6>{{ $contractorsCount }}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/contractors'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-user icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Staff</p>
+                                        <h6>---</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/contractors'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-notebook icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Contacts</p>
+                                        <h6>---</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/contractors'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-organization icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Branches</p>
+                                        <h6>---</h6>
                                     </div>
                                 </div>
                             </div>
@@ -128,88 +126,73 @@
                     <div class="col-12 col-md-4 col-lg-12 grid-margin stretch-card">
                         <div class="card card-hoverable">
                             <div class="card-body">
-                                <h6 class="card-title">Recent Jobcards</h6>
-                                <div class="table-responsive table-hover">
-                                    <table class="table mt-3 border-top">
-                                        <thead>
-                                            <tr>
-                                                <th>Customer</th>
-                                                <th style="width: 18%">Start Date</th>
-                                                <th style="width: 18%">End Date</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class='clickable-row' data-href='jobcards/1'>
-                                                <td>Ministry Of Health</td>
-                                                <td>22 May 2017</td>
-                                                <td>28 May 2017</td>
-                                                <td>
-                                                    <div class="badge badge-success badge-fw">Open</div>
-                                                </td>
-                                            </tr>
-                                            <tr class='clickable-row' data-href='jobcards/1'>
-                                                <td>The Commissioner of Labour</td>
-                                                <td>24 May 2017</td>
-                                                <td>25 May 2017</td>
-                                                <td>
-                                                    <div class="badge badge-warning badge-fw">Pending</div>
-                                                </td>
-                                            </tr>
-                                            <tr class='clickable-row' data-href='jobcards/1'>
-                                                <td>Gaborone City Council</td>
-                                                <td>26 May 2017</td>
-                                                <td>30 May 2017</td>
-                                                <td>
-                                                    <div class="badge badge-default badge-fw">Closed</div>
-                                                </td>
-                                            </tr>
-                                            <tr class='clickable-row' data-href='jobcards/1'>
-                                                <td>Malete Land Board</td>
-                                                <td>01 June 2017</td>
-                                                <td>04 May 2017</td>
-
-                                                <td>
-                                                    <div class="badge badge-danger badge-fw">Overdue</div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between flex-column flex-sm-row mt-4">
-                                    <p class="mb-3 mb-sm-0">Showing 1 to 20 of 20 entries</p>
-                                    <nav>
-                                        <ul class="pagination pagination-info mb-0">
-                                            <li class="page-item">
-                                                <a class="page-link">
-                                                    <i class="mdi mdi-chevron-left"></i>
-                                                </a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="bg-secondary border-dark page-link text-dark">1</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link">2</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link">3</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link">4</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link">
-                                                    <i class="mdi mdi-chevron-right"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                                <div class="d-flex float-right mt-4">
-                                    <button class="btn btn-primary btn-sm">View All
-                                        <i class="icon-arrow-right-circle icons ml-1"></i>
-                                    </button>
-                                </div>
+                                @if( COUNT($jobcards) )
+                                    <h6 class="card-title float-left mb-0 ml-2">Recent Jobcards</h6>
+                                    <div class="table-responsive table-hover">
+                                        <table class="table mt-3 border-top">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 30%">Customer</th>
+                                                    <th style="width: 20%">Start Date</th>
+                                                    <th style="width: 20%">End Date</th>
+                                                    <th style="width: 14%">Due</th>
+                                                    <th class="d-sm-none d-md-table-cell">Priority</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($jobcards as $jobcard)
+                                                    <tr class='clickable-row' data-href='/jobcards/{{ $jobcard->id }}'>
+                                                        <td data-toggle="tooltip" data-placement="{{ COUNT($jobcards) >= 3 ? 'top':'bottom' }}" title="{{ $jobcard->description }}">{{ $jobcard->title ? $jobcard->title:'____' }}</td>
+                                                        <td>{{ $jobcard->start_date ? Carbon\Carbon::parse($jobcard->start_date)->format('d M Y'):'____' }}</td>
+                                                        <td>{{ $jobcard->end_date ? Carbon\Carbon::parse($jobcard->end_date)->format('d M Y'):'____' }}</td>    
+                                                        <td class="d-none d-md-table-cell">
+                                                            @php
+                                                                $deadline = round((strtotime($jobcard->end_date)  
+                                                                                - strtotime(\Carbon\Carbon::now()->toDateTimeString()))  
+                                                                                / (60 * 60 * 24)) 
+                                                            @endphp
+                                                            @if($deadline > 0)
+                                                                {{ $deadline == 1 ? $deadline.' day' : $deadline.' days'  }}
+                                                            @else
+                                                                <i class="icon-exclamation icons mr-1 text-danger"></i>
+                                                                <span class="text-danger">due</span>
+                                                            @endif
+                                                        </td>                                              
+                                                        <td class="d-none d-md-table-cell">
+                                                            @if($jobcard->priority)
+                                                                <div  data-toggle="tooltip" data-placement="top" title="{{ $jobcard->priority->description }}"
+                                                                    class="badge badge-success" style="min-width: 80px;background:{{ $jobcard->priority->color_code }};">{{ $jobcard->priority ? $jobcard->priority->name:'____' }}</div>
+                                                            @else
+                                                                ____
+                                                            @endif    
+                                                        </td>  
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between flex-column flex-sm-row mt-4">
+                                        <p class="mb-3 ml-3 mb-sm-0"><strong>{{ $jobcards->total() }}</strong>{{ $jobcards->total() == 1 ? ' result': '  results' }} found</p>
+                                        <nav>
+                                            {{ $jobcards->links() }}
+                                        </nav>
+                                    </div>
+                                    <div class="d-flex float-right mt-2">
+                                        <a href= "{{ route('jobcards') }}" class="btn btn-primary btn-sm">View All
+                                            <i class="icon-arrow-right-circle icons ml-1"></i>
+                                        </a>
+                                    </div>
+                                @else
+                                    <h6 class="card-title float-left mb-0 ml-2">No Jobcards</h6>
+                                    <div class="col-4 offset-4">
+                                        <div data-toggle="tooltip" data-placement="top" title="Create a new jobcard">
+                                            <a href="/jobcards/create" class="btn btn-success p-5 w-100 animated-strips">                                            
+                                                <i class="d-block icon-sm icon-flag icons" style="font-size: 25px;"></i>
+                                                <span class="d-block mt-4">Create Jobcard</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -222,65 +205,15 @@
                             <h6 class="card-title">Recent Activity</h6>
                         </div>
                         <p class="card-description">Activity by staff members</p>
-                        <div class="list d-flex align-items-center border-bottom py-3">
-                            <img class="img-sm rounded-circle" src="{{ asset('images/profile_placeholder.svg') }}" alt="">
-                            <div class="wrapper w-100 ml-3">
-                                <p class="mb-0">
-                                    <a href="#">Kgomotso </a>posted a new jobcard for
-                                    <a href="#">Gaborone City Council</a>
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <i class="mdi mdi-clock text-muted mr-1"></i>
-                                        <small class="text-muted ml-auto">14 May 2017 - 08:26AM</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list d-flex align-items-center border-bottom py-3">
-                            <img class="img-sm rounded-circle" src="{{ asset('images/profile_placeholder.svg') }}" alt="">
-                            <div class="wrapper w-100 ml-3">
-                                <p class="mb-0">
-                                    <a href="#">Tumisang </a>posted a new jobcard for
-                                    <a href="#">Malete Land Board</a>
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <i class="mdi mdi-clock text-muted mr-1"></i>
-                                        <small class="text-muted ml-auto">15 May 2017 - 10:24AM</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list d-flex align-items-center border-bottom py-3">
-                            <img class="img-sm rounded-circle" src="{{ asset('images/profile_placeholder.svg') }}" alt="">
-                            <div class="wrapper w-100 ml-3">
-                                <p class="mb-0">
-                                    <a href="#">Tebogo </a>posted a new jobcard for
-                                    <a href="#">Water Utilities Cooperation</a>
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <i class="mdi mdi-clock text-muted mr-1"></i>
-                                        <small class="text-muted ml-auto">17 May 2017 - 13:45PM</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list d-flex align-items-center border-bottom py-3">
-                            <img class="img-sm rounded-circle" src="{{ asset('images/profile_placeholder.svg') }}" alt="">
-                            <div class="wrapper w-100 ml-3">
-                                <p class="mb-0">
-                                    <a href="#">Lesley </a>posted a new jobcard for
-                                    <a href="#">Gaborone City Council</a>
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <i class="mdi mdi-clock text-muted mr-1"></i>
-                                        <small class="text-muted ml-auto">19 May 2017 - 15:26PM</small>
-                                    </div>
-                                </div>
-                            </div>
+                        @foreach($recentActivities as $position => $recentActivity)
+                                                
+                            @include('layouts.recentActivity.activity-layout-2')
+                            
+                        @endforeach
+                        <div class="d-flex float-right mt-2">
+                            <button class="btn btn-primary btn-sm">View All
+                                <i class="icon-arrow-right-circle icons ml-1"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -329,10 +262,64 @@
     <script src="{{ asset('js/custom/chart.js') }}"></script>
     <script>
         $(document).ready(function ($) {
-            $(".clickable-row").click(function () {
-                window.location = $(this).data("href");
+
+            toggleExcessContent();
+
+            $('.toggle-summary-cards-btn').click(function(){
+                toggleExcessContent();
             });
+
         });
+
+        function toggleExcessContent(){
+            console.log('arranging...');
+            //  Show only 8 cards on the overview summary container
+            var showOnly = 8;
+            //  Get the overview container
+            var overviewSummary = $('.overview-summary');
+            //  Get the total number of actual summary cards on the screen
+            var summaryCards = $(overviewSummary).find('.summary-card');
+            //  Get the number of excess cards showing
+            var remainder = showOnly - summaryCards.length;
+            //  Target the toggle button for hide/show excess summary cards
+            var togglebtn = $('.overview-summary > .toggle-summary-cards-btn');
+
+            
+            //  If not expanded before then toggle show excess content
+            if( $(overviewSummary).hasClass('hidden-content') ){
+                console.log('stage 1');
+                //  Show all content
+                $('.overview-summary > .summary-card').slice(remainder).slideDown();                
+                //  Idicate that the content is shown
+                $('.overview-summary').removeClass('hidden-content');
+                $(togglebtn).find('i').removeClass('icon-arrow-down-circle').addClass('icon-arrow-up-circle');
+                $(togglebtn).find('span').text('Show Less');
+
+            //If expanded before or not at all then hide only if excess content exists
+            }else{
+                console.log('stage 2');
+                //  If we have too many cards on display than the showOnly
+                if(remainder < 0){
+                    //  Hide all those exceeding the limit
+                    $('.overview-summary > .summary-card').slice(remainder).slideUp('slow');
+                    //  If we already have the button then don't show add it again
+                    //  Otherwise add it just after the last showing summary-card
+                    if(!togglebtn.length){
+                        $('.overview-summary').append('<div class="toggle-summary-cards-btn col-12">'+
+                                '<button class="btn btn-dark d-block mr-auto ml-auto mb-3  rounded">'+
+                                    '<i class="icon-arrow-down-circle icons"></i><span>Show All</span>'+
+                                '</button>'+
+                            '</div>');
+                    }else{
+                        $(togglebtn).find('i').removeClass('icon-arrow-up-circle').addClass('icon-arrow-down-circle'); 
+                        $(togglebtn).find('span').text('Show All');
+                    }
+                    //  Idicate that the content is hidden
+                    $('.overview-summary').addClass('hidden-content');
+                }
+            }
+        }
+        
     </script>
     <!-- End custom js for this page-->
 

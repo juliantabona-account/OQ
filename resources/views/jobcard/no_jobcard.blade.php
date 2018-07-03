@@ -14,7 +14,7 @@
                                     <h6 class="card-title mt-2 mb-3 ml-2">Sorry, jobcard was not found</h6>
                                 </div>
                                 <div data-toggle="tooltip" data-placement="top" title="Create a new jobcard">
-                                    <a href="/jobcards/create" class="btn btn-success p-5 w-100 animated-strips">                                            
+                                    <a href="{{ route('jobcard-create') }}" class="btn btn-success p-5 w-100 animated-strips">                                            
                                         <i class="d-block icon-sm icon-flag icons" style="font-size: 25px;"></i>
                                         <span class="d-block mt-4">Create Jobcard</span>
                                     </a>

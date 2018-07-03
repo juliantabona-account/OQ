@@ -18,11 +18,13 @@
         <!-- plugins:css -->
         <link rel="stylesheet" href="{{ asset('css/plugins/mdi/css/materialdesignicons.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/plugins/simple-line-icons/css/simple-line-icons.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/plugins/perfect-scrollbar/dist/css/perfect-scrollbar.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/plugins/pace/themes/custom/custom-pace.css') }}">
         <!-- endinject -->
 
         <!-- plugin css for this page -->
         <link rel="stylesheet" href="{{ asset('css/plugins/font-awesome/css/font-awesome.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/plugins/jquery-bar-rating/dist/themes/fontawesome-stars.css') }}">
         <!-- End plugin css for this page -->
 
         <!-- App Compilled Styles -->
@@ -32,6 +34,8 @@
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
         <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}" />
+
+        @yield('style')
         
     </head>
 

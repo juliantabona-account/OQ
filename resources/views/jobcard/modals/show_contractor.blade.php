@@ -17,10 +17,10 @@
                 </div>                    
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">
+                <a href="#" class="btn btn-primary">
                     View Company
                     <i class="icon-arrow-right-circle icons ml-1"></i>
-                </button>
+                </a>
             </div>
         </div>
     </div>

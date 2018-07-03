@@ -13732,7 +13732,8 @@ a.text-warning:focus, a.text-warning:hover {
   color: #ff9b30 !important; }
 
 .text-danger {
-  color: #fb9678 !important; }
+  color: #dc3545  !important;
+  }
 
 a.text-danger:focus, a.text-danger:hover {
   color: #fa6f46 !important; }
@@ -21885,4 +21886,16 @@ button.btn-link {
 
 button.btn-link:hover {
   cursor: pointer;
+}
+
+.recent-activities-box,
+.recent-activities-box p,
+.recent-activities-box i{
+  font-size: 0.8rem;
+}
+
+/* Heart beat animation */
+@keyframes beat{
+	to { 
+	 transform: scale(1.3); }
 }

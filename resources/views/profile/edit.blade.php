@@ -27,16 +27,16 @@
                 <div class="col-12">
                     <div class="card card-hoverable">
                         <div class="card-body avatar">
-                            <img src="{{ Auth::user()->avatar }}" alt="Profile Image" class="profile-img">
-                            <p class="name">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
-                            <p class="designation">{{ Auth::user()->position  != ''? '-- '.Auth::user()->position->name.' --':'' }}</p>
-                            <span href="#" class="d-block text-center text-dark">{{ Auth::user()->email ? Auth::user()->email:'____' }}</span>
+                            <img src="{{ $profile->avatar }}" alt="Profile Image" class="profile-img">
+                            <p class="name">{{ $profile->first_name }} {{ $profile->last_name }}</p>
+                            <p class="designation">{{ $profile->position  != ''? '-- '.$profile->position.' --':'' }}</p>
+                            <span href="#" class="d-block text-center text-dark">{{ $profile->email ? $profile->email:'____' }}</span>
                             <span class="d-block text-center text-dark">
-                                @if(Auth::user()->phone_num)
+                                @if($profile->phone_num)
                                     <i class="icon-phone icons"></i>
                                 @endif
-                                {{ Auth::user()->phone_ext ? '+'.Auth::user()->phone_ext.'-':'___-' }}
-                                {{ Auth::user()->phone_num ? Auth::user()->phone_num:'____' }}
+                                {{ $profile->phone_ext ? '+'.$profile->phone_ext.'-':'___-' }}
+                                {{ $profile->phone_num ? $profile->phone_num:'____' }}
                             </span>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
             <div class="card card-hoverable">
                 <div class="row">
                     <div class="col-12">
-                    <a href="/profiles/{{ Auth::id() }}" class="btn btn-primary mt-3 ml-2 mb-2">
+                    <a href="/profiles/{{ $profile->id }}" class="btn btn-primary mt-3 ml-2 mb-2">
                         <i class="icon-arrow-left icons"></i>
                         Go Back
                     </a>
@@ -75,7 +75,7 @@
                             </li>
                         </ul>
                     </div>
-                    <form method="POST" action="{{ route('profile-update', [Auth::id()]) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('profile-update', [$profile->id]) }}" enctype="multipart/form-data">
                         {{ method_field('PUT') }}
                         @csrf
                         <div class="wrapper">
@@ -87,7 +87,7 @@
                                             <div class="form-group">
                                                 <label for="first_name">First Name</label>
                                                 <input type="text" id="first_name" name="first_name" placeholder="Enter first name..."
-                                                    value="{{ old('first_name', (Auth::user()->first_name ? Auth::user()->first_name:'') ) }}"  class="form-control{{ $errors->has('first_name') ? '  is-invalid' : '' }}">
+                                                    value="{{ old('first_name', ($profile->first_name ? $profile->first_name:'') ) }}"  class="form-control{{ $errors->has('first_name') ? '  is-invalid' : '' }}">
                                                     @if ($errors->has('first_name'))
                                                         <span class="help-block invalid-feedback d-block">
                                                             <strong>{{ $errors->first('first_name') }}</strong>
@@ -99,7 +99,7 @@
                                             <div class="form-group">
                                                 <label for="last_name">Last Name</label>
                                                 <input type="text" id="last_name" name="last_name" placeholder="Enter last name..."
-                                                    value="{{ old('last_name', (Auth::user()->last_name ? Auth::user()->last_name:'') ) }}"  class="form-control{{ $errors->has('last_name') ? '  is-invalid' : '' }}">
+                                                    value="{{ old('last_name', ($profile->last_name ? $profile->last_name:'') ) }}"  class="form-control{{ $errors->has('last_name') ? '  is-invalid' : '' }}">
                                                     @if ($errors->has('last_name'))
                                                         <span class="help-block invalid-feedback d-block">
                                                             <strong>{{ $errors->first('last_name') }}</strong>
@@ -115,7 +115,7 @@
                                                 <div class="input-group date datepicker p-0">
                                                     <input id="date_of_birth" 
                                                             type="text" placeholder="DD/MM/YYYY..."
-                                                            value="{{ old('date_of_birth', (Auth::user()->date_of_birth ? Auth::user()->date_of_birth:'') ) }}"
+                                                            value="{{ old('date_of_birth', ($profile->date_of_birth ? $profile->date_of_birth:'') ) }}"
                                                             name="date_of_birth"  
                                                             class="date-picker form-control{{ $errors->has('date_of_birth') ? '  is-invalid' : '' }} form-control-sm"
                                                             autocomplete="off" />
@@ -132,7 +132,7 @@
                                             <div class="form-group">
                                                 <label for="email">Email</label>
                                                 <input type="email" id="email" name="email" placeholder="Enter email address"
-                                                    value="{{ old('email', (Auth::user()->email ? Auth::user()->email:'') ) }}"  class="form-control{{ $errors->has('email') ? '  is-invalid' : '' }}">
+                                                    value="{{ old('email', ($profile->email ? $profile->email:'') ) }}"  class="form-control{{ $errors->has('email') ? '  is-invalid' : '' }}">
                                                     @if ($errors->has('email'))
                                                         <span class="help-block invalid-feedback d-block">
                                                             <strong>{{ $errors->first('email') }}</strong>
@@ -148,8 +148,8 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">+</span>
                                                 </div>
-                                                <input id="phone_info" type="text"  class="form-control{{ $errors->has('phone_ext') ? '  is-invalid' : '' }}" name="phone_ext" value="{{ old('phone_ext', (Auth::user()->phone_ext ? Auth::user()->phone_ext:'') ) }}" placeholder="Country code...">
-                                                <input type="text"  class="form-control{{ $errors->has('phone_num') ? '  is-invalid' : '' }}" name="phone_num" value="{{ old('phone_num', (Auth::user()->phone_num ? Auth::user()->phone_num:'') ) }}" placeholder="Phone number...">
+                                                <input id="phone_info" type="text"  class="form-control{{ $errors->has('phone_ext') ? '  is-invalid' : '' }}" name="phone_ext" value="{{ old('phone_ext', ($profile->phone_ext ? $profile->phone_ext:'') ) }}" placeholder="Country code...">
+                                                <input type="text"  class="form-control{{ $errors->has('phone_num') ? '  is-invalid' : '' }}" name="phone_num" value="{{ old('phone_num', ($profile->phone_num ? $profile->phone_num:'') ) }}" placeholder="Phone number...">
                                                 @if ($errors->has('phone_ext'))
                                                     <span class="help-block invalid-feedback d-block">
                                                         <strong>{{ $errors->first('phone_ext') }}</strong>
@@ -167,8 +167,8 @@
                                             <div class="input-group mb-3">
                                                 <label for="gender" class="m-0 p-0 w-100">Gender</label>
                                                 <select id="gender" class="form-control custom-select{{ $errors->has('gender') ? ' is-invalid' : '' }}" name="gender">
-                                                    <option value = "Male" {{ Auth::user()->gender == "Male" ? 'selected':'' }}>Male</option>
-                                                    <option value = "Female" {{ Auth::user()->gender == "Female" ? 'selected':'' }}>Female</option>
+                                                    <option value = "Male" {{ $profile->gender == "Male" ? 'selected':'' }}>Male</option>
+                                                    <option value = "Female" {{ $profile->gender == "Female" ? 'selected':'' }}>Female</option>
                                                 </select>
                                                 @if ($errors->has('gender'))
                                                     <span class="help-block invalid-feedback d-block">
@@ -183,7 +183,7 @@
                                             <div class="form-group">
                                                 <label for="address">Physical Address</label>
                                                 <textarea id="address" name="address" rows="1" placeholder="Enter physical address..."
-                                                    class="form-control{{ $errors->has('address') ? '  is-invalid' : '' }}">{{ old( 'address', (Auth::user()->address ? Auth::user()->address:'') ) }}</textarea>
+                                                    class="form-control{{ $errors->has('address') ? '  is-invalid' : '' }}">{{ old( 'address', ($profile->address ? $profile->address:'') ) }}</textarea>
                                                 @if ($errors->has('address'))
                                                     <span class="help-block invalid-feedback d-block">
                                                         <strong>{{ $errors->first('address') }}</strong>
@@ -194,12 +194,12 @@
                                     </div>
                                     <hr/>
                                     <div class="row">
-                                        @if(Auth::user()->company)
+                                        @if($profile->companyBranch)
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <label for="company">Company</label>
-                                                <select id="company" class="form-control custom-select{{ $errors->has('company') ? ' is-invalid' : '' }}" name="company_id">
-                                                    <option value = "{{ Auth::user()->company->id ? Auth::user()->company->id:'' }}">{{ Auth::user()->company->name ? Auth::user()->company->name:'' }}</option>
+                                                <label for="company_branch">Company Branch</label>
+                                                <select id="company_branch" class="form-control custom-select{{ $errors->has('company') ? ' is-invalid' : '' }}" name="company_branch_id">
+                                                    <option value = "{{ $profile->companyBranch->id ? $profile->companyBranch->id:'' }}">{{ $profile->companyBranch->name ? $profile->companyBranch->name:'' }}</option>
                                                 </select>
                                                 @if ($errors->has('company'))
                                                     <span class="help-block invalid-feedback d-block">
@@ -209,14 +209,14 @@
                                             </div>
                                         </div>
                                         @endif
-                                        @if(Auth::user()->company)
-                                            @if(Auth::user()->company->positions)
+                                        @if($profile->company)
+                                            @if($profile->company->positions)
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label for="company_position">Company Position</label>
                                                     <select id="company_position" class="form-control custom-select{{ $errors->has('company_position') ? ' is-invalid' : '' }}" name="position">
-                                                        @foreach(Auth::user()->company->positions as $position)
-                                                            <option value = "{{ $position->id }}" {{ Auth::user()->position->name == $position->name ? 'selected':'' }}>{{ $position->name }}</option>
+                                                        @foreach($profile->company->positions as $position)
+                                                            <option value = "{{ $position->id }}" {{ $profile->position == $position->name ? 'selected':'' }}>{{ $position->name }}</option>
                                                         @endforeach
                                                     </select>
                                                     @if ($errors->has('company_position'))
@@ -245,7 +245,7 @@
                                                     <strong>{{ $errors->first('avatar') }}</strong>
                                                 </span>
                                             @endif  
-                                            <input type="file" data-max-file-size="2mb" data-default-file="{{ Auth::user()->avatar }}"
+                                            <input type="file" data-max-file-size="2mb" data-default-file="{{ $profile->avatar }}"
                                             class="dropify form-control {{ $errors->has('avatar') ? ' is-invalid' : '' }}" name="avatar">                                      
                                     </div>
                                     <div class="form-group mt-5">
@@ -304,7 +304,7 @@
                                                             <div class="input-group-text bg-primary text-white">Document Name: </div>
                                                         </div>                                                                
                                                         <input type="text" id="doc_name" name="doc_name" placeholder="Enter document name..."
-                                                        value="{{ old('doc_name', (Auth::user()->doc_name ? Auth::user()->doc_name:'') ) }}" 
+                                                        value="{{ old('doc_name', ($profile->doc_name ? $profile->doc_name:'') ) }}" 
                                                         class="form-control{{ $errors->has('doc_name') ? '  is-invalid' : '' }}">
                                                         @if ($errors->has('doc_name'))
                                                             <span class="help-block invalid-feedback d-block">
@@ -320,7 +320,7 @@
                                                             <strong>{{ $errors->first('doc_file') }}</strong>
                                                         </span>
                                                     @endif  
-                                                    <input type="file" data-max-file-size="2mb" data-default-file="{{ old('doc_file', (Auth::user()->doc_file ? Auth::user()->doc_file:'') ) }}"
+                                                    <input type="file" data-max-file-size="2mb" data-default-file="{{ old('doc_file', ($profile->doc_file ? $profile->doc_file:'') ) }}"
                                                     class="dropify form-control {{ $errors->has('doc_file') ? ' is-invalid' : '' }}" name="doc_file">                                      
                                                 </div>
                                             </div>

@@ -25,12 +25,11 @@
                                     <table class="table mt-3 border-top">
                                         <thead>
                                             <tr>
-                                                <th style="width: 30%">Customer</th>
+                                                <th style="width: 28%">Customer</th>
                                                 <th style="width: 15%">Start Date</th>
                                                 <th style="width: 15%">End Date</th>
-                                                <th style="width: 14%" class="d-sm-none d-md-table-cell">Reference</th>
                                                 <th style="width: 18%" class="d-sm-none d-md-table-cell">Contractor</th>
-                                                <th style="width: 10%">Due</th>
+                                                <th style="width: 14%">Due</th>
                                                 <th class="d-sm-none d-md-table-cell">Priority</th>
                                                 <th>Status</th>
                                             </tr>
@@ -38,22 +37,48 @@
                                         <tbody>
                                             @foreach($jobcards as $jobcard)
                                                 <tr class='clickable-row' data-href='/jobcards/{{ $jobcard->id }}'>
-                                                    <td data-toggle="tooltip" data-placement="{{ COUNT($jobcards) >= 3 ? 'top':'bottom' }}" title="Installation of new aircons in offices">{{ $jobcard->title ? $jobcard->title:'____' }}</td>
+                                                    <td data-toggle="tooltip" data-placement="top" title="{{ $jobcard->description }}">{{ $jobcard->title ? $jobcard->title:'____' }}</td>
                                                     <td>{{ $jobcard->start_date ? Carbon\Carbon::parse($jobcard->start_date)->format('d M Y'):'____' }}</td>
                                                     <td>{{ $jobcard->end_date ? Carbon\Carbon::parse($jobcard->end_date)->format('d M Y'):'____' }}</td>
-                                                    <td data-toggle="tooltip" data-placement="{{ COUNT($jobcards) >= 3 ? 'top':'bottom' }}" data-html="true" title="<b>Katlo Sesiane<b><br>Mobile: +267 76548921<br>Email: bonolosesiane@gmail.com" class="d-none d-md-table-cell">??Mr Sesiane</td>
-                                                    <td data-toggle="tooltip" data-placement="{{ COUNT($jobcards) >= 3 ? 'top':'bottom' }}" data-html="true" title="<b>Stanley Busang<b><br>Mobile: +267 76902134<br>Email: stanley@trioptimum.co.bw" class="d-none d-md-table-cell">??TriOptimum (PTY) LTD</td>      
-                                                    <td class="d-none d-md-table-cell">
-                                                        {{ 
-                                                            round((strtotime($jobcard->end_date)  
-                                                                        - strtotime(\Carbon\Carbon::now()->toDateTimeString()))  
-                                                                        / (60 * 60 * 24)) 
+                                                    
+                                                    @php
+                                                        $selectedContractor = $jobcard->selectedContractor;
+                                                    @endphp
 
-                                                        }}
-                                                    </td>                                              
+                                                    <td data-toggle="tooltip" data-placement="top" data-html="true" 
+                                                        title="Phone: {{ $selectedContractor['phone_ext'] ? '+'.$selectedContractor['phone_ext'].'-':'___-' }}
+                                                                      {{ $selectedContractor['phone_num'] ? $selectedContractor['phone_num']:'____' }}
+                                                                <br>
+                                                                Email: {{ $selectedContractor['email'] ? $selectedContractor['email']:'____' }}" class="d-none d-md-table-cell">{{ $selectedContractor['name'] ? $selectedContractor['name']:'____' }}</td>      
+                                                    <td class="d-none d-md-table-cell">
+                                                        @php
+                                                            $deadline = round((strtotime($jobcard->end_date)  
+                                                                            - strtotime(\Carbon\Carbon::now()->toDateTimeString()))  
+                                                                            / (60 * 60 * 24)) 
+                                                        @endphp
+                                                        @if($deadline > 0)
+                                                            {{ $deadline == 1 ? $deadline.' day' : $deadline.' days'  }}
+                                                        @else
+                                                            <i class="icon-exclamation icons mr-1 text-danger"></i>
+                                                            <span class="text-danger">due</span>
+                                                        @endif
+                                                    </td>                                             
                                                     <td class="d-none d-md-table-cell">{{ $jobcard->priority->name }}</td>                                           
                                                     <td>
-                                                        <div class="badge badge-success badge-fw">Open</div>
+                                                        @if($jobcard->processFormStep)  
+                                                            @php
+                                                                $status = $jobcard->processFormStep->step_instruction;
+                                                            @endphp
+                                                            @if($status)
+                                                                <div class="badge badge-success badge-fw" style="background:{{ $status['color'] }};">
+                                                                    {{ $status['name'] }}
+                                                                </div>
+                                                            @else
+                                                                ____
+                                                            @endif 
+                                                        @else
+                                                            ____
+                                                        @endif 
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -61,7 +86,7 @@
                                     </table>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between flex-column flex-sm-row mt-4">
-                                    <p class="mb-3 mb-sm-0">Showing 1 to 5 of 20 entries</p>
+                                        <p class="mb-3 ml-3 mb-sm-0"><strong>{{ $jobcards->total() }}</strong>{{ $jobcards->total() == 1 ? ' result': '  results' }} found</p>
                                     <nav>
                                         {{ $jobcards->links() }}
                                     </nav>

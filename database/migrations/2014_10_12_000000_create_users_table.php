@@ -29,7 +29,7 @@ class CreateUsersTable extends Migration
             $table->string('verifyToken')->nullable();
             $table->text('settings')->nullable();
             $table->text('tutorial_status')->nullable();
-            $table->integer('branch_id')->unsigned()->nullable();
+            $table->integer('company_branch_id')->unsigned()->nullable();
             $table->string('position')->nullable();
             $table->integer('created_by')->unsigned()->nullable();
             $table->rememberToken();

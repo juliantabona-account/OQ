@@ -19,12 +19,60 @@ class CompanyController extends Controller
     {
     }
 
-    public function show()
+    public function getClients()
     {
+        $clients = Auth::user()->companyBranch->company->clients()->paginate(3, ['*'], 'clients');
+
+        return view('company.client.index', compact('clients'));
     }
 
-    public function edit()
+    public function getContractors()
     {
+        $contractors = Auth::user()->companyBranch->company->contractors()->paginate(3, ['*'], 'contractors');
+
+        return view('company.contractor.index', compact('contractors'));
+    }
+
+    public function showClient($client_id)
+    {
+        $client = Company::find($client_id);
+        $jobcards = Jobcard::where('client_id', $client_id)->paginate(10, ['*'], 'jobcards');
+        if ($client) {
+            $contacts = $client->contacts()->paginate(3, ['*'], 'contacts');
+        } else {
+            $contacts = null;
+        }
+        $jobcardProcessSteps = Auth::user()->companyBranch->company->processForms->where('selected', 1)->where('type', 'jobcard')->first()->steps;
+
+        return view('company.client.show', compact('client', 'contacts', 'jobcards', 'jobcardProcessSteps'));
+    }
+
+    public function showContractor($contractor_id)
+    {
+        $contractor = Company::find($contractor_id);
+
+        $jobcards = $contractor->assignedJobcards()->paginate(10, ['*'], 'jobcards');
+
+        if ($contractor) {
+            $contacts = $contractor->contacts()->paginate(3, ['*'], 'contacts');
+        } else {
+            $contacts = null;
+        }
+        $jobcardProcessSteps = Auth::user()->companyBranch->company->processForms->where('selected', 1)->where('type', 'jobcard')->first()->steps;
+
+        return view('company.contractor.show', compact('contractor', 'contacts', 'jobcards', 'jobcardProcessSteps'));
+    }
+
+    public function create()
+    {
+        return view('company.create');
+    }
+
+    public function edit($company_id)
+    {
+        $company = Company::find($company_id);
+
+        return view('company.edit', compact('company'));
     }
 
     public function store(Request $request)
@@ -128,12 +176,13 @@ class CompanyController extends Controller
 
         //If the company was created successfully
         if ($company) {
-            $companyActivity = $company->recentActivity()->create([
+            $companyActivity = Auth::user()->companyBranch->recentActivities()->create([
                 'activity' => [
                                 'type' => 'created',
                                 'company' => $company,
                             ],
                 'created_by' => Auth::id(),
+                'company_branch_id' => Auth::user()->companyBranch,
             ]);
 
             //  If we have the jobcard ID
@@ -148,12 +197,13 @@ class CompanyController extends Controller
                     //  Save the company as part of the companies client directory
                     $jobcard->owningBranch->company->clients()->attach([$company->id => ['created_by' => Auth::id()]]);
 
-                    $jobcardActivity = $jobcard->recentActivity()->create([
+                    $jobcardActivity = $jobcard->recentActivities()->create([
                         'activity' => [
                                         'type' => 'client_added',
                                         'company' => $company,
                                     ],
                         'created_by' => Auth::id(),
+                        'company_branch_id' => Auth::user()->companyBranch,
                     ]);
                 } elseif ($request->input('new_company_type') == 'contractor') {
                     //  Save the company as part of the companies contractor directory
@@ -179,12 +229,13 @@ class CompanyController extends Controller
                         'created_by' => Auth::id(),
                     ]]);
 
-                    $jobcardActivity = $jobcard->recentActivity()->create([
+                    $jobcardActivity = $jobcard->recentActivities()->create([
                         'activity' => [
                                         'type' => 'contractor_added',
                                         'company' => $company,
                                     ],
                         'created_by' => Auth::id(),
+                        'company_branch_id' => Auth::user()->companyBranch,
                     ]);
                 }
             }
@@ -193,14 +244,132 @@ class CompanyController extends Controller
         //Alert update success
         $request->session()->flash('alert', array($request->input('new_company_type').' added successfully!', 'icon-check icons', 'success'));
 
-        return redirect()->route('jobcard-show', $request->input('jobcard_id'));
+        //  If we have the jobcard ID
+        if (!empty($request->input('jobcard_id'))) {
+            return redirect()->route('jobcard-show', $request->input('jobcard_id'));
+        //  If we added a new client
+        } elseif ($request->input('new_company_type') == 'client') {
+            return redirect()->route('client-show', $company->id);
+        //  If we added a new contractor
+        } elseif ($request->input('new_company_type') == 'contractor') {
+            return redirect()->route('contractor-show', $company->id);
+        }
     }
 
-    public function update(Request $request, $client_id)
+    public function update(Request $request, $company_id)
     {
+        $company = Company::find($company_id);
+
+        if ($request->hasFile('new_company_logo')) {
+            $logoFile = $request->only('new_company_logo')['new_company_logo'];
+        } else {
+            $logoFile = [];
+            $logo_url = $company->logo_url ? $company->logo_url : null;
+        }
+
+        // Add all uploads for validation
+        $fileArray = array_merge(array('new_company_logo' => $logoFile), $request->all());
+
+        // Rules for form data
+        $rules = array(
+            //General Validation
+
+            'new_company_name' => 'required',
+            'new_company_phone_ext' => 'max:3',
+            'new_company_phone_num' => 'max:13',
+        );
+
+        //If we have the new company logo then validate it
+        if ($request->hasFile('new_company_logo')) {
+            $rules = array_merge($rules, [
+                    // Rules for logo image data
+                    'new_company_logo' => 'mimes:jpeg,jpg,png,gif|max:2000', // max 2000Kb/2Mb
+                ]
+            );
+        }
+
+        //Customized error messages
+        $messages = [
+            //General Validation
+            'new_company_name.required' => 'Enter company name',
+            'new_company_name.max' => 'Company name cannot be more than 255 characters',
+            'new_company_name.min' => 'Company name must be atleast 3 characters',
+            'new_company_email.unique' => 'This company email is already being used',
+            'new_company_phone_ext.max' => 'Company phone number extension cannot be more than 3 characters',
+            'new_company_phone_num.max' => 'Company phone number cannot be more than 13 characters',
+
+            //Logo image Validation
+            'new_company_logo.mimes' => 'Company logo must be an image format e.g) jpeg,jpg,png,gif',
+            'new_company_logo.max' => 'Company logo should not be more than 2MB in size',
+          ];
+
+        // Now pass the input and rules into the validator
+        $validator = Validator::make($fileArray, $rules, $messages);
+
+        // Check to see if validation fails or passes
+        if ($validator->fails()) {
+            //Alert update error
+            $request->session()->flash('alert', array('Couldn\'t save '.$request->input('new_company_type').', check your information!', 'icon-exclamation icons', 'danger'));
+
+            return Redirect::back()->withErrors($validator)->withInput();
+        } else {
+            //If we have the new company logo and has been approved, then save it to Amazon S3 bucket
+            if ($request->hasFile('new_company_logo')) {
+                $logo = Input::file('new_company_logo');
+
+                $logo_resized = Image::make($logo->getRealPath())->resize(250, 250, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+
+                $logo_name = 'company_logos/cl_'.time().uniqid().'.'.$logo->guessClientExtension();
+
+                Storage::disk('s3')->put($logo_name, $logo_resized->stream()->detach(), 'public');
+
+                $logo_url = env('AWS_URL').$logo_name;
+            }
+        }
+
+        //Update the company
+        $updated = $company->update([
+            'name' => $request->input('new_company_name'),
+            'city' => $request->input('new_company_city'),
+            'state_or_region' => $request->input('new_company_state_or_region'),
+            'address' => $request->input('new_company_address'),
+            'logo_url' => $logo_url,
+            'phone_ext' => $request->input('new_company_phone_ext'),
+            'phone_num' => $request->input('new_company_phone_num'),
+            'email' => $request->input('new_company_email'),
+            'website_link' => $request->input('new_company_web_link'),
+            'created_by' => Auth::id(),
+        ]);
+
+        //If the company was updated successfully
+        if ($updated) {
+            $companyActivity = Auth::user()->companyBranch->recentActivities()->create([
+                'activity' => [
+                                'type' => 'updated',
+                                'company' => $company,
+                            ],
+                'created_by' => Auth::id(),
+                'company_branch_id' => Auth::user()->companyBranch,
+            ]);
+        }
+
+        //Alert update success
+        $request->session()->flash('alert', array($request->input('new_company_type').' updated successfully!', 'icon-check icons', 'success'));
+
+        //  If we updated a client
+        if ($request->input('new_company_type') == 'client') {
+            return redirect()->route('client-show', $company->id);
+        //  If we updated a contractor
+        } elseif ($request->input('new_company_type') == 'contractor') {
+            return redirect()->route('contractor-show', $company->id);
+        } else {
+            return redirect()->route('company-edit', $company->id);
+        }
     }
 
-    public function delete(Request $request, $client_id)
+    public function delete(Request $request, $company_id)
     {
     }
 }

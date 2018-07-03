@@ -16,7 +16,15 @@ Route::get('/', function () {
 })->middleware('guest');
 
 Route::get('/overview', function () {
-    return view('overview.index');
+    $jobcards = Auth::user()->companyBranch->jobcards()->paginate(5, ['*'], 'jobcards');
+    $clientsCount = Auth::user()->companyBranch->company->clients->count();
+    $contractorsCount = Auth::user()->companyBranch->company->contractors->count();
+    $recentActivities = Auth::user()->companyBranch->company->recentActivities()->paginate(3, ['*'], 'activities');
+
+    //return $recentActivities;
+    $jobcardProcessSteps = Auth::user()->companyBranch->company->processForms->where('selected', 1)->where('type', 'jobcard')->first()->steps;
+
+    return view('overview.index', compact('jobcards', 'clientsCount', 'contractorsCount', 'recentActivities', 'jobcardProcessSteps'));
 })->middleware('auth');
 
 Route::group(['prefix' => 'profiles',  'middleware' => 'auth'], function () {
@@ -33,40 +41,15 @@ Route::group(['prefix' => 'jobcards',  'middleware' => 'auth'], function () {
     Route::get('/', 'JobcardController@index')->name('jobcards');
     Route::post('/', 'JobcardController@store')->name('jobcard-store');
     Route::get('/create', 'JobcardController@create')->name('jobcard-create');
-
-    /*  REMOVE THIS-> */
-    /*  REMOVE THIS-> */
-
-    Route::get('/open', function () {
-        return view('jobcard.open');
-    });
-
-    Route::get('/pending', function () {
-        return view('jobcard.pending');
-    });
-
-    Route::get('/unpaid', function () {
-        return view('jobcard.unpaid');
-    });
-
-    Route::get('/overdue', function () {
-        return view('jobcard.overdue');
-    });
-
-    Route::get('/all', function () {
-        return view('jobcard.all');
-    });
-
-    /*  <-REMOVE THIS */
-    /*  <-REMOVE THIS */
-
     Route::get('/{jobcard_id}', 'JobcardController@show')->name('jobcard-show');
     Route::put('/{jobcard_id}', 'JobcardController@update')->name('jobcard-update');
     Route::delete('/{jobcard_id}', 'JobcardController@delete')->name('jobcard-delete');
-
     Route::put('/{jobcard_id}/progress', 'JobcardController@updateProgress')->name('jobcard-update-progress');
     //Route::get('/{jobcard_id}/edit', 'JobcardController@edit')->name('jobcard-edit');
+    Route::get('/step/{step_id}', 'JobcardController@showStepJobcard')->name('show-step-jobcard');
+    Route::get('/{jobcard_id}/download/pdf', 'JobcardController@downloadPdf')->name('jobcard-download-pdf');
     Route::delete('/{jobcard_id}/client/{client_id}', 'JobcardController@removeClient')->name('jobcard-remove-client');
+    Route::put('/{jobcard_id}/contractors/{contractor_id}/selected', 'JobcardController@selectContractor')->name('jobcard-select-contractor');
     Route::delete('/{jobcard_id}/contractors/{contractor_id}/{pivot_id}', 'JobcardController@removeContractor')->name('jobcard-remove-contractor');
 
     /*  REMOVE THIS-> */
@@ -90,11 +73,11 @@ Route::group(['prefix' => 'jobcards',  'middleware' => 'auth'], function () {
 Route::group(['prefix' => 'companies',  'middleware' => 'auth'], function () {
     //Route::get('/', 'CompanyController@index')->name('companies');
     Route::post('/', 'CompanyController@store')->name('company-store');
-    //Route::get('/create', 'CompanyController@create')->name('company-create');
-    //Route::get('/{client_id}', 'CompanyController@show')->name('company-show');
-    //Route::put('/{client_id}', 'CompanyController@update')->name('company-update');
-    //Route::delete('/{client_id}', 'CompanyController@delete')->name('company-delete');
-    //Route::get('/{client_id}/edit', 'CompanyController@edit')->name('company-edit');
+    Route::get('/create', 'CompanyController@create')->name('company-create');
+    //Route::get('/{company_id}', 'CompanyController@show')->name('company-show');
+    Route::put('/{company_id}', 'CompanyController@update')->name('company-update');
+    //Route::delete('/{company_id}', 'CompanyController@delete')->name('company-delete');
+    Route::get('/{company_id}/edit', 'CompanyController@edit')->name('company-edit');
 });
 
 /*  TO BE TRASHED */
@@ -109,7 +92,7 @@ Route::group(['prefix' => 'contacts',  'middleware' => 'auth'], function () {
     //Route::get('/', 'ContactController@index')->name('contacts');
     Route::post('/', 'ContactController@store')->name('contact-store');
     //Route::get('/create', 'ContactController@create')->name('contact-create');
-    //Route::get('/{contact_id}', 'ContactController@show')->name('contact-show');
+    Route::get('/{contact_id}', 'ContactController@show')->name('contact-show');
     //Route::put('/{contact_id}', 'ContactController@update')->name('contact-update');
     //Route::delete('/{contact_id}', 'ContactController@delete')->name('contact-delete');
     //Route::get('/{contact_id}/edit', 'ContactController@edit')->name('contact-edit');
@@ -117,10 +100,10 @@ Route::group(['prefix' => 'contacts',  'middleware' => 'auth'], function () {
 
 /*  CLIENTS    create, edit, save, delete, display */
 Route::group(['prefix' => 'clients',  'middleware' => 'auth'], function () {
-    //Route::get('/', 'ClientController@index')->name('clients');
-    Route::post('/', 'ClientController@store')->name('client-store');
+    Route::get('/', 'CompanyController@getClients')->name('clients');
+    //Route::post('/', 'ClientController@store')->name('client-store');
     //Route::get('/create', 'ClientController@create')->name('client-create');
-    //Route::get('/{client_id}', 'ClientController@show')->name('client-show');
+    Route::get('/{client_id}', 'CompanyController@showClient')->name('client-show');
     //Route::put('/{client_id}', 'ClientController@update')->name('client-update');
     //Route::delete('/{client_id}', 'ClientController@delete')->name('client-delete');
     //Route::get('/{client_id}/edit', 'ClientController@edit')->name('client-edit');
@@ -128,37 +111,34 @@ Route::group(['prefix' => 'clients',  'middleware' => 'auth'], function () {
 
 /*  CONTRACTORS    create, edit, save, delete, display */
 Route::group(['prefix' => 'contractors',  'middleware' => 'auth'], function () {
-    //Route::get('/', 'ContractorController@index')->name('contractors');
-    Route::post('/', 'ContractorController@store')->name('contractor-store');
+    Route::get('/', 'CompanyController@getContractors')->name('contractors');
+    //Route::post('/', 'ContractorController@store')->name('contractor-store');
     //Route::get('/create', 'ContractorController@create')->name('contractor-create');
-    //Route::get('/{contractor_id}', 'ContractorController@show')->name('contractor-show');
+    Route::get('/{contractor_id}', 'CompanyController@showContractor')->name('contractor-show');
     //Route::put('/{contractor_id}', 'ContractorController@update')->name('contractor-update');
     //Route::delete('/{contractor_id}', 'ContractorController@delete')->name('contractor-delete');
     //Route::get('/{contractor_id}/edit', 'ContractorController@edit')->name('contractor-edit');
-});
-
-Route::get('/clients', function () {
-    return view('client.index');
-});
-
-Route::get('/clients/1', function () {
-    return view('client.show');
-});
-
-Route::get('/contractors', function () {
-    return view('contractor.index');
 });
 
 Route::get('/contractors/gaborone', function () {
     return view('contractor.gaborone');
 });
 
-Route::get('/contractors/1', function () {
-    return view('contractor.show');
-});
-
 Route::get('/calendar', function () {
-    return view('calendar.index');
+    $jobcards = App\jobcard::all();
+    /*
+    $caledar_data = $jobcards->map(function ($jobcard) {
+        return [
+            'id' => $jobcard->pluck('id')[0],
+            'title' => $jobcard->pluck('title')[0],
+            'description' => $jobcard->pluck('description')[0],
+            'start' => $jobcard->pluck('start_date')[0],
+            'end' => $jobcard->pluck('end_date')[0],
+            'url' => '/jobcards/1'.$jobcard->pluck('id')[0],
+        ];
+    });
+    */
+    return view('calendar.index', compact('jobcards'));
 });
 
 Route::get('/search', function () {

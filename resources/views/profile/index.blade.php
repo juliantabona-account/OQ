@@ -12,23 +12,21 @@
                         <div class="card-body pt-3 pl-3 pr-3 pb-2">
                             <div class="align-items-center d-flex float-left justify-content-between mr-3 mt-0">
                                 <div class="d-inline-block">
-                                    <div class="bg-primary px-md-4 rounded">
+                                    <div class="bg-success px-md-4 rounded">
                                         <i class="d-inline-block icon-md icon-user pb-2 pt-3 text-white"></i>
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <h6 class="card-title mb-0">Statistics</h6>
-                                <div class="d-inline-block pt-3">
+                                <div class="d-inline-block pt-1">
+                                    <span class="text-success card-title mb-0 d-block">Statistics</span>
                                     <div class="d-lg-flex">
-                                        <h4 class="mb-0">23 Members</h4>
-                                        <span class="ml-2 mr-2">|</span>
-                                        <span class="mb-0 text-black-50">15 Males</span>
-                                        <span class="ml-2 mr-2">|</span>
-                                        <span class="mb-0 text-black-50">8 Females</span>
-                                        <div class="d-flex align-items-center ml-lg-2"></div>
+                                        <h4 class="mb-0">{{ $profiles->total() }} Staff Members</h4>
                                     </div>
                                 </div>
+                                <a href="#" class="btn btn-primary btn-sm float-right mt-2">
+                                    + Create Staff
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -36,129 +34,93 @@
                 <div class="col-12 col-md-12 col-lg-12 grid-margin stretch-card">
                     <div class="card card-hoverable">
                         <div class="card-body p-3 pt-4">
-                            <div class="row">
-                                <div class="col-12">
-                                    <h3 class="card-title mb-3 mt-4">Staff Members</h3>
-                                    <div class="d-flex table-responsive">
-                                        <div class="btn-group ml-auto mr-2 border-0">
-                                            <input type="text" placeholder="Search Here" class="form-control">
-                                            <div class="btn-group mr-2">
-                                                <button class="btn btn-sm btn-primary">
-                                                    <i class="icon-magnifier icons"></i> Search</button>
+
+                            @if( COUNT($profiles) )
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3 class="card-title mb-3 mt-4">Staff Members</h3>
+                                        <div class="d-flex table-responsive">
+                                            <div class="btn-group ml-auto mr-2 border-0">
+                                                <input type="text" placeholder="Search Here" class="form-control">
+                                                <div class="btn-group mr-2">
+                                                    <button class="btn btn-sm btn-primary">
+                                                        <i class="icon-magnifier icons"></i> Search</button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="table-responsive table-hover">
-                                        <table class="table mt-3 border-top">
-                                            <thead>
-                                                <tr>
-                                                    <th>First Name</th>
-                                                    <th>Last Name</th>
-                                                    <th>Phone</th>
-                                                    <th>Email</th>
-                                                    <th>Location</th>
-                                                    <th>Position</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Keitumetse </td>
-                                                    <td>Mosinyi</td>
-                                                    <td>+267 3902321</td>
-                                                    <td>keitumetse@tagola.co.bw</td>
-                                                    <td>Gaborone</td>
-                                                    <td>Operations Manager</td>
-                                                </tr>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Kgosi </td>
-                                                    <td>Mosimane</td>
-                                                    <td>+267 3989321</td>
-                                                    <td>keitumetse@tagola.co.bw</td>
-                                                    <td>Serowe</td>
-                                                    <td>Sales personnel</td>
-                                                </tr>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Junior </td>
-                                                    <td>Molema</td>
-                                                    <td>+267 3908672</td>
-                                                    <td>junior@tagola.co.bw</td>
-                                                    <td>Lobatse</td>
-                                                    <td>Marketing Director</td>
-                                                </tr>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Tebogo </td>
-                                                    <td>Lesedi</td>
-                                                    <td>+267 3901232</td>
-                                                    <td>tebogo@tagola.co.bw</td>
-                                                    <td>Gaborone</td>
-                                                    <td>Administrator</td>
-                                                </tr>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Kelebogile </td>
-                                                    <td>Botshelo</td>
-                                                    <td>+267 3975893</td>
-                                                    <td>kelebogile@tagola.co.bw</td>
-                                                    <td>Palapye</td>
-                                                    <td>Operations Manager</td>
-                                                </tr>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Dikeledi </td>
-                                                    <td>Mosweu</td>
-                                                    <td>+267 3978432</td>
-                                                    <td>dikeledi@tagola.co.bw</td>
-                                                    <td>Lobatse</td>
-                                                    <td>Sales personnel</td>
-                                                </tr>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Gorata </td>
-                                                    <td>Segomotso</td>
-                                                    <td>+267 3908672</td>
-                                                    <td>junior@tagola.co.bw</td>
-                                                    <td>Serowe</td>
-                                                    <td>Marketing Director</td>
-                                                </tr>
-                                                <tr class='clickable-row' data-href='/profiles/1'>
-                                                    <td>Masego</td>
-                                                    <td>Obone</td>
-                                                    <td>+267 3901232</td>
-                                                    <td>tebogo@tagola.co.bw</td>
-                                                    <td>Gaborone</td>
-                                                    <td>Administrator</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between flex-column flex-sm-row mt-4">
-                                        <p class="mb-3 mb-sm-0">Showing 1 to 20 of 20 entries</p>
-                                        <nav>
-                                            <ul class="pagination pagination-info mb-0">
-                                                <li class="page-item">
-                                                    <a class="page-link">
-                                                        <i class="mdi mdi-chevron-left"></i>
+                                        <div class="table-responsive table-hover">
+                                            <table class="table mt-3 border-top">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>First Name</th>
+                                                        <th>Last Name</th>
+                                                        <th>Phone</th>
+                                                        <th>Email</th>
+                                                        <th>Branch</th>
+                                                        <th>Position</th>
+                                                        <th>Created On</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($profiles as $profile)
+                                                        <tr class='clickable-row' data-href="{{ route('profile-show', [$profile->id]) }}">
+                                                            <td>
+                                                                <div class="lightgallery">
+                                                                    <a href="{{ $profile->avatar }}">
+                                                                        <img src="{{ $profile->avatar }}" alt="Profile Image" class="profile-img "/>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                            <td>{{ $profile->first_name ? $profile->first_name:'____'  }}</td>
+                                                            <td>{{ $profile->last_name ? $profile->last_name:'____' }}</td>
+                                                            <td>
+                                                                {{ $profile->phone_ext ? '+'.$profile->phone_ext.'-':'___-' }}
+                                                                {{ $profile->phone_num ? $profile->phone_num:'____' }}
+                                                            </td>
+                                                            <td>{{ $profile->email ? $profile->email:'____' }}</td>
+                                                            <td>{{ $profile->companyBranch ? $profile->companyBranch->name:'____' }}</td>
+                                                            <td>{{ $profile->position ? $profile->position:'____' }}</td>
+                                                            <td>{{ $profile->created_at ? Carbon\Carbon::parse($profile->created_at)->format('d M Y'):'____' }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between flex-column flex-sm-row mt-4">
+                                            @if($profiles->total() != 0)
+                                                <p class="mb-3 ml-3 mb-sm-0">
+                                                    <strong>{{ $profiles->total() }}</strong>{{ $profiles->total() == 1 ? ' result': '  results' }} found
+                                                </p>
+                                            @else
+                                                <div class="col-6 offset-3" data-toggle="tooltip" data-placement="top" title="Create a new staff member">
+                                                    <a href="#" class="btn btn-success p-5 w-100 animated-strips">                                            
+                                                        <i class="d-block icon-sm icon-user icons" style="font-size: 25px;"></i>
+                                                        <span class="d-block mt-4">Create Staff</span>
                                                     </a>
-                                                </li>
-                                                <li class="page-item active">
-                                                    <a class="bg-secondary border-dark page-link text-dark">1</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a class="page-link">2</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a class="page-link">3</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a class="page-link">4</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a class="page-link">
-                                                        <i class="mdi mdi-chevron-right"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </nav>
+                                                </div>
+                                            @endif
+                                            <nav>
+                                                {{ $profiles->links() }}
+                                            </nav>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+
+                            @else
+                                <h6 class="card-title float-left mb-0 ml-2">No Clients</h6>
+                                <div class="col-4 offset-4">
+                                    <div data-toggle="tooltip" data-placement="top" title="Create a new jobcard">
+                                        <a href="#" class="btn btn-success p-5 w-100 animated-strips">                                            
+                                            <i class="d-block icon-sm icon-flag icons" style="font-size: 25px;"></i>
+                                            <span class="d-block mt-4">Create Client</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
+
+
                         </div>
                     </div>
                 </div>

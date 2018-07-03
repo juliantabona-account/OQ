@@ -157,9 +157,14 @@
     
   });
 
-  $(".clickable-row, .card-clickable").click(function () {
-    if($(this).data("href") != undefined){
-      window.location = $(this).data("href");
+  $(".clickable-row, .card-clickable").click(function (e) {
+    //  Stop executing this action if user clicked inner elements
+    //  that should not redirect them. Anything with the class [not-clickable] e.g (Download buttons)
+    if (!$(e.target).hasClass('not-clickable')) {
+      //  Otherwise just follow the URL of the element clicked and redirect the user
+      if($(this).data("href") != undefined){
+        window.location = $(this).data("href");
+      }
     }
   });
 

@@ -18,7 +18,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'first_name', 'last_name', 'email', 'username', 'password', 'gender', 'date_of_birth', 'bio', 'address', 'phone_ext', 'phone_num',
-        'avatar', 'status', 'verifyToken', 'settings', 'tutorial_status', 'company_id', 'position', 'created_by',
+        'avatar', 'status', 'verifyToken', 'settings', 'tutorial_status', 'company_branch_id', 'position', 'created_by',
     ];
 
     /**
@@ -43,7 +43,7 @@ class User extends Authenticatable
 
     public function companyBranch()
     {
-        return $this->belongsTo('App\CompanyBranch', 'branch_id');
+        return $this->belongsTo('App\CompanyBranch', 'company_branch_id');
     }
 
     public function getAvatarAttribute($value)

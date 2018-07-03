@@ -12,7 +12,7 @@ class Jobcard extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'start_date', 'end_date', 'status_id', 'priority_id', 'cost_center_id', 'branch_id',
+        'title', 'description', 'start_date', 'end_date', 'step_id', 'priority_id', 'cost_center_id', 'company_branch_id',
         'category_id', 'client_id', 'select_contractor_id', 'img_url', 'created_by',
     ];
 
@@ -21,7 +21,7 @@ class Jobcard extends Model
         return $this->morphMany('App\View', 'viewable');
     }
 
-    public function recentActivity()
+    public function recentActivities()
     {
         return $this->morphMany('App\RecentActivity', 'trackable')
                     ->orderBy('created_at', 'desc');
@@ -54,7 +54,7 @@ class Jobcard extends Model
 
     public function owningBranch()
     {
-        return $this->belongsTo('App\CompanyBranch', 'branch_id');
+        return $this->belongsTo('App\CompanyBranch', 'company_branch_id');
     }
 
     public function client()
@@ -62,11 +62,21 @@ class Jobcard extends Model
         return $this->belongsTo('App\Company', 'client_id');
     }
 
+    public function selectedContractor()
+    {
+        return $this->belongsTo('App\Company', 'select_contractor_id');
+    }
+
     public function contractorsList()
     {
         return $this->belongsToMany('App\Company', 'jobcard_contractors', 'jobcard_id', 'contractor_id')
                     ->withPivot('id', 'jobcard_id', 'contractor_id', 'amount', 'quotation_doc_url')
                     ->withTimestamps();
+    }
+
+    public function processFormStep()
+    {
+        return $this->belongsTo('App\ProcessFormSteps', 'step_id');
     }
 
     /*
