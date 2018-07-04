@@ -448,6 +448,8 @@ class JobcardController extends Controller
         $processFormData = $updatedProcessInstructions[0]['process_form'];
         $pluginComponents = $updatedProcessInstructions[0]['process_form'][$request->input('plugin_step')]['plugin'];
 
+        return $request->all();
+
         //  Foreach plugin component in the process step being updated
         foreach ($pluginComponents as $position => $field) {
             //  Check if the component field is of an attachable file

@@ -96,14 +96,14 @@
                                                     @foreach($jobcard->processInstructions->first()->process_form as $instruction)
                                                         <li data-toggle="tooltip" data-placement="top" title="{{ $instruction['description'] }}"
                                                             class="breadcrumb-item progress-status-tabs{{ ($instruction['active'] || $instruction['updated']) ? ' active': '' }}" 
-                                                            data-toggle="modal" data-target="#exampleModal-{{ $instruction['id'] }}">
+                                                            data-toggle="modal" data-target="#exampleModal-{{ $instruction->id }}">
                                                             <span>
                                                                     {{ $instruction['name'] }}
                                                                     @if($instruction['updated'])
                                                                         <i class="icon-check icons"></i>
                                                                     @endif
                                                             </span>
-                                                            <input type="hidden" class="process_step_id" value="{{ $instruction['id'] }}">
+                                                            <input type="hidden" class="process_step_id" value="{{ $instruction->id }}">
                                                             <input type="hidden" class="plugin" value="{{ json_encode( $instruction['plugin'] ) }}">
                                                         </li>
                                                     @endforeach
