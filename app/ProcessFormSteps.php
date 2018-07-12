@@ -6,15 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcessFormSteps extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $casts = [
-        'step_instruction' => 'collection',
-    ];
-
     protected $table = 'process_form_steps';
     /**
      * The attributes that are mass assignable.
@@ -33,5 +24,12 @@ class ProcessFormSteps extends Model
     public function jobcards()
     {
         return $this->hasMany('App\Jobcard', 'step_id');
+    }
+
+    public function fields()
+    {
+        return $this->belongsToMany('App\ProcessFormField', 'process_form_field_allocation', 'step_id', 'field_id')
+                    ->withPivot('step_id', 'field_id')
+                    ->withTimestamps();
     }
 }

@@ -47,10 +47,19 @@ class Jobcard extends Model
         return $this->belongsTo('App\Priority', 'priority_id');
     }
 
-    public function processInstructions()
+    public function processFormAllocation()
     {
-        return $this->morphMany('App\ProcessFormAllocation', 'processable');
+        return $this->morphMany('App\ProcessFormAllocation', 'trackable');
     }
+
+    /*
+
+        public function processInstructions()
+        {
+            return $this->morphMany('App\ProcessFormAllocation', 'trackable');
+        }
+
+    */
 
     public function owningBranch()
     {

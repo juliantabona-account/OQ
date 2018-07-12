@@ -90,25 +90,34 @@
                                         <i class="icon-exclamation icons"></i>
                                         <a href="#" class="text-warning">Authorize</a>
                                     </span>
-                                    @if(COUNT($jobcard->processInstructions))
+
+                                    @if(COUNT($jobcard->processFormAllocation))
                                         <nav aria-label="breadcrumb" role="navigation">
                                             <ol class="breadcrumb breadcrumb-custom pt-2">
-                                                    @foreach($jobcard->processInstructions->first()->process_form as $instruction)
-                                                        <li data-toggle="tooltip" data-placement="top" title="{{ $instruction['description'] }}"
-                                                            class="breadcrumb-item progress-status-tabs{{ ($instruction['active'] || $instruction['updated']) ? ' active': '' }}" 
-                                                            data-toggle="modal" data-target="#exampleModal-{{ $instruction->id }}">
-                                                            <span>
-                                                                    {{ $instruction['name'] }}
-                                                                    @if($instruction['updated'])
-                                                                        <i class="icon-check icons"></i>
-                                                                    @endif
-                                                            </span>
-                                                            <input type="hidden" class="process_step_id" value="{{ $instruction->id }}">
-                                                            <input type="hidden" class="plugin" value="{{ json_encode( $instruction['plugin'] ) }}">
-                                                        </li>
-                                                    @endforeach
-                                                    
-                                                    <input type="hidden" id="processInstructions" value="{{ json_encode( $jobcard->processInstructions ) }}">
+                                                @foreach($process->first()['steps'] as $step)
+                                                    @for ($i = 0; $i < COUNT($step['fields']); $i++)
+                                                        @php
+                                                            if(COUNT($step['fields'][$i]['response'])){
+                                                                $updated = true;
+                                                            }else{
+                                                                $updated = false;
+                                                            }
+                                                        @endphp
+                                                    @endfor
+                                                    <li data-toggle="tooltip" data-placement="top" title="{{ $step['description'] }}"
+                                                        class="breadcrumb-item progress-status-tabs{{ ($updated) ? ' active': '' }}" 
+                                                        data-toggle="modal" data-target="#exampleModal-{{ $step->id }}">
+                                                        <span>
+                                                            {{ $step['name'] }}
+                                                            @if($updated)
+                                                                <i class="icon-check icons"></i>
+                                                            @endif
+                                                        </span>
+                                                        <input type="hidden" class="step" value="{{ json_encode( $step ) }}">
+                                                    </li>
+                                                @endforeach
+                                                
+                                                <input type="hidden" id="processInstructions" value="{{ json_encode( $process ) }}">
                                             </ol>
                                             @if( $jobcardProgressPercentage !== null )
                                                 <div class="progress" data-toggle="tooltip" data-placement="top" title="{{ $jobcardProgressPercentage }}% completed">

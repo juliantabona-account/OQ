@@ -4,18 +4,17 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProcessFormStepsTable extends Migration
+class CreateProcessFormStepAllocationTable extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up()
     {
-        Schema::create('process_form_steps', function (Blueprint $table) {
+        Schema::create('process_form_step_allocation', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('description');
-            $table->string('icon')->nullable();
+            $table->integer('process_form_id')->unsigned();
+            $table->integer('step_id')->unsigned();
             $table->integer('created_by')->unsigned();
             $table->timestamps();
         });
@@ -26,6 +25,6 @@ class CreateProcessFormStepsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('process_form_steps');
+        Schema::dropIfExists('process_form_step_allocation');
     }
 }

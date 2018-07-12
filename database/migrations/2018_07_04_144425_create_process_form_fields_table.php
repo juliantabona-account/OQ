@@ -4,19 +4,21 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProcessFormTable extends Migration
+class CreateProcessFormFieldsTable extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up()
     {
-        Schema::create('process_form', function (Blueprint $table) {
+        Schema::create('process_form_fields', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('company_id')->unsigned();
+            $table->string('name');
             $table->string('type');
-            $table->boolean('selected');
-            $table->text('instructions');
+            $table->boolean('fillable')->default(1);
+            $table->boolean('optional')->default(0);
+            $table->string('placeholder');
+            $table->string('width');
             $table->integer('created_by')->unsigned();
             $table->timestamps();
         });
@@ -27,6 +29,6 @@ class CreateProcessFormTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('process_form');
+        Schema::dropIfExists('process_form_fields');
     }
 }
