@@ -80,6 +80,7 @@
                 </ul>
             </div>
         </li>
+    
         <li class="nav-item">
             <a href="/calendar" class="nav-link">
                 <i class="icon-calendar menu-icon text-dark"></i>
@@ -92,8 +93,27 @@
                 <span class="menu-title text-dark">Reports</span>
             </a>
         </li>
+
+        <li class="nav-item d-none d-lg-block">
+            <a data-toggle="collapse" href="#sub-settings" aria-expanded="false" aria-controls="sidebar-layouts" class="nav-link collapsed">
+                <i class="icon-settings menu-icon text-dark"></i>
+                <span class="menu-title text-dark">Settings</span>
+                <i class="dropdown-arrow icon-arrow-down icons"></i>
+            </a>
+            <div id="sub-settings" class="collapse">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Process Forms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Roles/Permissions</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
         <li class="nav-item nav-doc m-0">
-            <a href="pages/documentation.html" class="nav-link bg-primary">
+            <a href="#" class="nav-link bg-primary">
                 <i class="icon-support menu-icon mr-2"></i>
                 <span class="menu-title mt-1">Support</span>
             </a>

@@ -11,22 +11,68 @@
 |
 */
 
+Route::group(['prefix' => 'jobcards',  'middleware' => 'auth'], function () {
+    /*
+     *  Template Routes & Names for Index, Create, Store, Show, Edit, Update & Destroy
+     *  Templates refer to the various mockups used to generate application forms & contract documments
+     */
+    Route::resource('/processForms', 'TemplateController', [
+            'names' => [
+                'index' => 'jobcard.processForm.index',
+                'create' => 'jobcard.processForm.create',
+                'store' => 'jobcard.processForm.store',
+                'show' => 'jobcard.processForm.show',
+                'edit' => 'jobcard.processForm.edit',
+                'update' => 'jobcard.processForm.update',
+                'destroy' => 'jobcard.processForm.destroy',
+            ],
+        ]);
+
+    Route::group(['prefix' => 'processForms'], function () {
+        //  create and update jobcard process form templates
+        Route::put('/{processForm}/selected', 'TemplateController@selectTemplate')->name('jobcard-select-process-form');
+        Route::get('create/{processForm}/step/2', 'TemplateController@createStep2')->name('jobcard.processForm.create.step2');
+        Route::get('create/{processForm}/step/3', 'TemplateController@createStep3')->name('jobcard.processForm.create.step3');
+        Route::get('create/{processForm}/step/4', 'TemplateController@createStep4')->name('jobcard.processForm.create.step4');
+        Route::put('create/{processForm}/step/2', 'TemplateController@updateStep2')->name('jobcard.processForm.update.step2');
+        Route::put('create/{processForm}/step/3', 'TemplateController@updateStep3')->name('jobcard.processForm.update.step3');
+    });
+});
+
 Route::get('/', function () {
     return view('auth.login');
 })->middleware('guest');
 
 Route::get('/overview', function () {
-    $jobcards = Auth::user()->companyBranch->jobcards()->paginate(5, ['*'], 'jobcards');
-    $clientsCount = Auth::user()->companyBranch->company->clients->count();
-    $contractorsCount = Auth::user()->companyBranch->company->contractors->count();
-    $recentActivities = Auth::user()->companyBranch->company->recentActivities()->paginate(3, ['*'], 'activities');
+    //  Lets assume
+    $userHasBranch = false;
+    $userHasCompany = false;
+    //  Get the users branch
+    $usersCompanyBranch = Auth::user()->companyBranch;
+    //  If the user has been assigned a branch then get more data
+    if ($usersCompanyBranch) {
+        $userHasBranch = true;
+        //  Get jobcards relating to the users branch
+        $jobcards = $usersCompanyBranch->jobcards()->paginate(5, ['*'], 'jobcards');
+        //  Get the branch parent company
+        $usersCompany = $usersCompanyBranch->company;
+        //  If the branch has been assigned to a parent company
+        if ($usersCompany) {
+            $userHasCompany = true;
+            //  Get the total number of clients relating to the users company
+            $clientsCount = $usersCompany->clients->count();
+            //  Get the total number of contractors relating to the users company
+            $contractorsCount = $usersCompany->contractors->count();
+            //  Get all recent activities relating to the users company
+            $recentActivities = $usersCompany->recentActivities()->paginate(3, ['*'], 'activities');
+            //  return $recentActivities;
+            $jobcardProcessSteps = $usersCompany->processForms->where('selected', 1)->where('type', 'jobcard')->first()->steps;
+        }
+    }
 
-    //return $recentActivities;
-    $jobcardProcessSteps = Auth::user()->companyBranch->company->processForms->where('selected', 1)->where('type', 'jobcard')->first()->steps;
-    //$jobcardProcessSteps = Auth::user()->companyBranch->company->processForms->where('selected', 1)->where('type', 'jobcard')->first()->steps;
-
-    return view('overview.index', compact('jobcards', 'clientsCount', 'contractorsCount', 'recentActivities', 'jobcardProcessSteps'));
-})->middleware('auth');
+    return view('overview.index', compact('jobcards', 'clientsCount', 'contractorsCount', 'recentActivities', 'jobcardProcessSteps',
+                                           'userHasBranch', 'userHasCompany'));
+})->middleware('auth')->name('overview');
 
 Route::group(['prefix' => 'profiles',  'middleware' => 'auth'], function () {
     Route::get('/', 'UserController@index')->name('profiles');
@@ -91,9 +137,9 @@ Route::group(['prefix' => 'companies',  'middleware' => 'auth'], function () {
 /*  CONTACTS    create, edit, save, delete, display */
 Route::group(['prefix' => 'contacts',  'middleware' => 'auth'], function () {
     //Route::get('/', 'ContactController@index')->name('contacts');
-    Route::post('/', 'ContactController@store')->name('contact-store');
+    //Route::post('/', 'ContactController@store')->name('contact-store');
     //Route::get('/create', 'ContactController@create')->name('contact-create');
-    Route::get('/{contact_id}', 'ContactController@show')->name('contact-show');
+    //Route::get('/{contact_id}', 'ContactController@show')->name('contact-show');
     //Route::put('/{contact_id}', 'ContactController@update')->name('contact-update');
     //Route::delete('/{contact_id}', 'ContactController@delete')->name('contact-delete');
     //Route::get('/{contact_id}/edit', 'ContactController@edit')->name('contact-edit');
@@ -148,4 +194,4 @@ Route::get('/search', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/home', 'HomeController@index')->name('home');

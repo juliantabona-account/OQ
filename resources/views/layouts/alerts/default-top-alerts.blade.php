@@ -6,6 +6,6 @@
         @if(!empty(Session::get('alert')[1]))
             <i class = "{{ Session::get('alert')[1] }} mr-2"></i>
         @endif
-        {{ Session::get('alert')[0] }}
+        {!! Session::get('alert')[0] !!}
     </div>
 @endif

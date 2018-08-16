@@ -353,7 +353,7 @@
                                                     @foreach($contractors as $contractor)
                                                         <tr class="clickable-row show-contractor-modal-btn" data-toggle="modal" data-target="#show-contractor-modal">
                                                             <td>
-                                                                <form method="POST" action="{{ route('jobcard-select-contractor', [$jobcard->id, $contractor->id]) }}" enctype="multipart/form-data">
+                                                                <form method="POST" action="{{ route('jobcard-select-contractor', [$jobcard->id, $contractor->id]) }}">
                                                                     {{ method_field('PUT') }}
                                                                     @csrf
 

@@ -12,7 +12,7 @@ class ProcessForm extends Model
      * @var string
      */
     protected $casts = [
-        'instructions' => 'collection',
+        'form_structure' => 'collection',
     ];
 
     protected $table = 'process_form';
@@ -22,7 +22,7 @@ class ProcessForm extends Model
      * @var array
      */
     protected $fillable = [
-        'company_id', 'type', 'selected', 'instructions', 'created_by',
+        'name', 'description', 'company_id', 'type', 'selected', 'form_structure', 'created_by',
     ];
 
     public function steps()
@@ -30,5 +30,11 @@ class ProcessForm extends Model
         return $this->belongsToMany('App\ProcessFormSteps', 'process_form_step_allocation', 'process_form_id', 'step_id')
                     ->withPivot('process_form_id', 'step_id')
                     ->withTimestamps();
+    }
+
+    public function recentActivities()
+    {
+        return $this->morphMany('App\RecentActivity', 'trackable')
+                    ->orderBy('created_at', 'desc');
     }
 }

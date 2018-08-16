@@ -19,7 +19,14 @@
                         <div class="card-body">
                             <div class="form-group mt-0">
                                 <h3 class="float-left">
-                                    {{ app('request')->input('type') == "contractor" ? 'Create Contractor': 'Create Client' }}
+                                    @if( app('request')->input('type') == "user" )
+                                        Create Company
+                                        <p class="mb-0 mt-2 text-black-50" style="line-height: 22px;">You are not assigned to any company or branch. To resolve this, you must create a new company so that you can start creating assets, jobcards, clients or contractors relating to your new company. If you already had a company before and seem to have lost access to it please <a href="#">Contact Support</a></p>
+                                    @elseif( app('request')->input('type') == "client" )
+                                        Create Client
+                                    @elseif( app('request')->input('type') == "contractor" )
+                                        Create Contractor
+                                    @endif
                                 </h3>
                             </div>
                         </div>
@@ -31,7 +38,7 @@
                         <div class="card-body p-3 pt-4">
                             <form method="POST" action="{{ route('company-store') }}" enctype="multipart/form-data">
                                 @csrf
-                                <input type="hidden" value="{{ app('request')->input('type') == "contractor" ? 'contractor': 'client' }}" name="new_company_type">
+                                <input type="hidden" value="{{ app('request')->input('type') }}" name="new_company_type">
                                 <div class="row">
 
                                     <div class="col-12">
@@ -131,8 +138,8 @@
                                     </div>
                                     
                                     <div class="col-12">
-                                        <button type="submit" class="btn btn-primary mt-3 mr-2 float-right">
-                                            Create Client
+                                        <button type="submit" class="btn btn-primary mt-3 mr-2 float-right capitalize-text">
+                                            Create
                                             <i class="icon-paper-plane icons"></i>
                                         </button>
                                     </div>
