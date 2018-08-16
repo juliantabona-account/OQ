@@ -18,7 +18,21 @@ class CreateUsersTable extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('gender')->nullable();
+<<<<<<< HEAD
             $table->string('affiliation')->nullable();
+=======
+            $table->date('date_of_birth')->nullable();
+            $table->string('bio')->nullable();
+            $table->string('address')->nullable();
+            $table->string('phone_ext')->nullable();
+            $table->string('phone_num')->nullable();
+            $table->string('avatar')->nullable();
+            $table->boolean('status')->default(0);
+            $table->string('verifyToken')->nullable();
+            $table->text('settings')->nullable();
+            $table->text('tutorial_status')->nullable();
+            $table->integer('company_branch_id')->unsigned()->nullable();
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
             $table->string('position')->nullable();
             $table->string('country')->nullable();
             $table->string('organisation_type')->nullable();   //2

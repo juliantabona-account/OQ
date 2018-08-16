@@ -309,7 +309,18 @@ class UserController extends Controller
             $profile->password = Hash::make($request->input('password'));
         }
 
+<<<<<<< HEAD
         $profile->company_branch_id = $request->input('company_id');
+=======
+        /*
+            FIX THE CODE BELOW TO SAVE THE USERS CURRENT BRACNCH
+            WE USED TO SAVE THE USERS COMPANY BUT NOW WE WANT TO
+            SAVE THE USERS BRANCH ID INSTEAD
+
+            $profile->company_branch_id = $request->input('company_id');
+        */
+
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
         $profile->position = $request->input('position');
 
         //If we have the image, update it as well

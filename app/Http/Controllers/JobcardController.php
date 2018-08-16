@@ -80,17 +80,45 @@ class JobcardController extends Controller
             // Calculate how long ago they viewed from now
             $jobcardProgress = [];
 
-            if (count($jobcard->processInstructions)) {
-                //Get the Jobcard process steps
-                $jobcardProgress = array_count_values(collect($jobcard->processInstructions[0]['process_form'])->map(function ($status) use ($jobcardProgress) {
-                    //Find out if the the step has any plugin information
-                    if (count($status['plugin'])) {
-                        //Foreach plugin component/field
-                        return collect($status['plugin'])->map(function ($plugin) use ($jobcardProgress) {
-                            //Check if this component/field is fillable (means the user can add content to it) AND
-                            //Check if the user has actually filled that compnent/field
-                            if ($plugin['fillable']) {
-                                if ($plugin['update']['done']) {
+            //  If the jobcard has been allocated to a process form
+            if (count($jobcard->processFormAllocation)) {
+                //Get the Jobcard allocated process form and get the steps for it
+                $processForm = $jobcard->processFormAllocation->first()->processForm;
+
+                $process = $processForm->with(array('steps' => function ($steps) use ($processForm, $jobcard) {
+                    $steps->with(array('fields' => function ($fields) use ($steps, $processForm, $jobcard) {
+                        $fields->with(array('response' => function ($response) use ($fields, $steps, $processForm, $jobcard) {
+                            $response //->where('field_id', $fields->pluck('field_id'))
+                                      //->where('step_id', $steps->pluck('step_id'))
+                                     ->where('trackable_id', $jobcard->id)
+                                     ->where('trackable_type', 'jobcard');
+                        }));
+                    }));
+                }))->get();
+
+                //  Show last queries
+                //  DB::enableQueryLog();
+                //  dd(DB::getQueryLog());
+
+                $steps = $processForm['steps'];
+                //  Foreach step
+                $jobcardProgress = array_count_values(collect($steps)->map(function ($step) use ($processForm, $jobcard, $jobcardProgress) {
+                    //  Find out if the the step has any fields relating to it
+                    $fields = $step['fields'];
+                    //  Verify that we have atleast one field available for this step
+                    //  A "field" is an alert, input, textarea, select or attachment input
+                    if ($fields->count()) {
+                        //  Foreach field
+                        return collect($fields)->map(function ($field) use ($step, $processForm, $jobcard, $jobcardProgress) {
+                            //  Check if this field is fillable (means the user can add content to it) AND
+                            //  Check if the user has actually filled that compnent/field, also known as a response
+                            if ($field->fillable) {
+                                //  Run query to get the specific response for this specific field,
+                                //  of the specific step, of the specific process form for this
+                                //  specific jobcard
+                                $hasResponse = $field['response'];
+
+                                if (count($hasResponse)) {
                                     //Record that the user filled this component/field
                                     return collect($jobcardProgress)->push(1);
                                 } else {
@@ -105,8 +133,8 @@ class JobcardController extends Controller
                         return '';  // return nothing if no plugin data
                     }
                     //flatten and group results
-                    //  $jobcardProgress[0] = Number of fillable fields that were not completed
-                    //  $jobcardProgress[1] = Number of fillable fields that were completed
+                    //  $jobcardProgress[0] =  Number of fillable fields that were not completed
+                    //  $jobcardProgress[1] =  Number of fillable fields that were completed
                     //  $jobcardProgress[''] = Number of non-fillable components e.g( alerts )
                 })->flatten()->toArray());
 
@@ -119,13 +147,16 @@ class JobcardController extends Controller
                 if (!array_key_exists(1, $jobcardProgress)) {
                     $jobcardProgress[1] = 0;
                 }
-
-                $jobcardProgressPercentage = round(($jobcardProgress[1] / ($jobcardProgress[0] + $jobcardProgress[1])) * 100);
+                if ($jobcardProgress[1] != 0 && $jobcardProgress[1] != 0) {
+                    $jobcardProgressPercentage = round(($jobcardProgress[1] / ($jobcardProgress[0] + $jobcardProgress[1])) * 100);
+                } else {
+                    $jobcardProgressPercentage = null;
+                }
             } else {
                 $jobcardProgressPercentage = null;
             }
 
-            return view('jobcard/show', compact('jobcard', 'deadline', 'jobcardProgressPercentage', 'contacts', 'contractors'));
+            return view('jobcard/show', compact('jobcard', 'deadline', 'process', 'jobcardProgressPercentage', 'contacts', 'contractors'));
         } else {
             return view('jobcard/no_jobcard');
         }
@@ -377,7 +408,46 @@ class JobcardController extends Controller
                 ],
                 'created_by' => Auth::id(),
                 'company_branch_id' => Auth::user()->company_branch_id,
+<<<<<<< HEAD
             ]);
+        }
+
+        return redirect()->route('jobcard-show', [$jobcard_id]);
+    }
+
+    public function selectContractor(Request $request, $jobcard_id, $contractor_id)
+    {
+        $jobcard = Jobcard::find($jobcard_id);
+        $company = Company::find($contractor_id);
+
+        if ($request->input('selected_contractor') == 'on') {
+            $value = $contractor_id;
+        } else {
+            $value = null;
+        }
+
+        $updated = $jobcard->update([
+            'select_contractor_id' => $value,
+        ]);
+
+        if ($updated) {
+            $jobcardActivity = $jobcard->recentActivities()->create([
+                'activity' => [
+                                'type' => 'contractor_selected',
+                                'jobcard' => $jobcard,
+                                'company' => $company,
+                            ],
+                'created_by' => Auth::id(),
+                'company_branch_id' => Auth::user()->company_branch_id,
+=======
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
+            ]);
+
+            //Alert update success
+            $request->session()->flash('alert', array('Changes saved successfully!', 'icon-check icons', 'success'));
+        } else {
+            //Alert update success
+            $request->session()->flash('alert', array('Something went wrong updating. Try again', 'icon-check icons', 'danger'));
         }
 
         return redirect()->route('jobcard-show', [$jobcard_id]);
@@ -447,6 +517,8 @@ class JobcardController extends Controller
         $updatedProcessInstructions = (array) json_decode(rawurldecode($request->input('updated_process_instructions')), true);
         $processFormData = $updatedProcessInstructions[0]['process_form'];
         $pluginComponents = $updatedProcessInstructions[0]['process_form'][$request->input('plugin_step')]['plugin'];
+
+        return $request->all();
 
         //  Foreach plugin component in the process step being updated
         foreach ($pluginComponents as $position => $field) {

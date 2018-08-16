@@ -1,9 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+<<<<<<< HEAD
 <div class="row">
         <div class="col-md-12 col-lg-12">
             <div class="row overview-summary">
+=======
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                 <div class="row overview-summary">
                     <div class="col-md-12 col-lg-12 grid-margin stretch-card">
                         <div class="card">
@@ -12,6 +17,7 @@
                             </div>
                         </div>
                     </div>
+<<<<<<< HEAD
                                             <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                             <div class="card card-clickable" data-href="/jobcards/overdue">
                                 <div class="card-body">
@@ -20,10 +26,22 @@
                                         <div class="ml-3">
                                             <p class="mb-0">Requests</p>
                                             <h6>215</h6>
+=======
+                    @foreach($jobcardProcessSteps as $processStep)
+                        <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                            <div class="card card-clickable" data-href="{{ route('show-step-jobcard', [$processStep->id]) }}">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-md-center">
+                                        <i class="icon-lg {{ $processStep->icon }}"></i>
+                                        <div class="ml-3">
+                                            <p class="mb-0">{{ $processStep->name }}</p>
+                                            <h6>{{ $processStep->jobcards->count() }}</h6>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                                         </div>
                                     </div>
                                 </div>
                             </div>
+<<<<<<< HEAD
                         </div><div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                             <div class="card card-clickable" data-href="http://127.0.0.1:8000/jobcards/step/1">
                                 <div class="card-body">
@@ -33,10 +51,23 @@
                                             <p class="mb-0">Authorized</p>
                                             <h6>187</h6>
                                         </div>
+=======
+                        </div>
+                    @endforeach
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/jobcards/overdue'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-exclamation icons icon-lg"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Overdue Jobs</p>
+                                        <h6>---</h6>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                                     </div>
                                 </div>
                             </div>
                         </div>
+<<<<<<< HEAD
                                             <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                             <div class="card card-clickable" data-href="http://127.0.0.1:8000/jobcards/step/2">
                                 <div class="card-body">
@@ -45,11 +76,23 @@
                                         <div class="ml-3">
                                             <p class="mb-0">Currently Reviewed</p>
                                             <h6>126</h6>
+=======
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                            <div class="card card-clickable" data-href='/jobcards/overdue'>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-md-center">
+                                        <i class="icon-social-dropbox icons icon-lg"></i>
+                                        <div class="ml-3">
+                                            <p class="mb-0">UnAuthorized</p>
+                                            <h6>---</h6>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+<<<<<<< HEAD
                                             <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                             <div class="card card-clickable" data-href="http://127.0.0.1:8000/jobcards/step/5">
                                 <div class="card-body">
@@ -94,10 +137,34 @@
                                     <div class="ml-3">
                                         <p class="mb-0">Overdue</p>
                                         <h6>24</h6>
+=======
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/clients'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-emotsmile icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Clients</p>
+                                        <h6>{{ $clientsCount }}</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/contractors'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-briefcase icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Contractors</p>
+                                        <h6>{{ $contractorsCount }}</h6>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<<<<<<< HEAD
                     </div><div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
                         <div class="card card-clickable" data-href="/clients">
                             <div class="card-body">
@@ -106,10 +173,22 @@
                                     <div class="ml-3">
                                         <p class="mb-0">Clients</p>
                                         <h6>984</h6>
+=======
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/contractors'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-user icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Staff</p>
+                                        <h6>---</h6>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                                     </div>
                                 </div>
                             </div>
                         </div>
+<<<<<<< HEAD
                     </div><div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card" style="">
                         <div class="card card-clickable" data-href="/contractors">
                             <div class="card-body">
@@ -118,10 +197,22 @@
                                     <div class="ml-3">
                                         <p class="mb-0">Staff</p>
                                         <h6>1027</h6>
+=======
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/contractors'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-notebook icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Contacts</p>
+                                        <h6>---</h6>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                                     </div>
                                 </div>
                             </div>
                         </div>
+<<<<<<< HEAD
                     </div><div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card" style="">
                         <div class="card card-clickable" data-href="/contractors">
                             <div class="card-body">
@@ -130,6 +221,17 @@
                                     <div class="ml-3">
                                         <p class="mb-0">Contacts</p>
                                         <h6>5734</h6>
+=======
+                    </div>
+                    <div class="summary-card col-md-6 col-lg-3 grid-margin stretch-card">
+                        <div class="card card-clickable" data-href='/contractors'>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-md-center">
+                                    <i class="icon-lg icon-organization icons"></i>
+                                    <div class="ml-3">
+                                        <p class="mb-0">Branches</p>
+                                        <h6>---</h6>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                                     </div>
                                 </div>
                             </div>
@@ -138,6 +240,7 @@
                 <div class="toggle-summary-cards-btn col-12"><button class="btn btn-dark d-block mr-auto ml-auto mb-3  rounded"><i class="icons icon-arrow-down-circle"></i><span>Show More</span></button></div></div>
             </div>
         </div>
+<<<<<<< HEAD
     </div>
     <div class="row">
         <div class="col-lg-8 d-flex flex-column">
@@ -197,11 +300,88 @@
                             <a href="http://127.0.0.1:8000/jobcards" class="btn btn-primary btn-sm">View All
                                 <i class="icon-arrow-right-circle icons ml-1"></i>
                             </a>
+=======
+        <div class="row">
+            <div class="col-lg-8 d-flex flex-column">
+                <div class="row flex-grow">
+                    <div class="col-12 col-md-4 col-lg-12 grid-margin stretch-card">
+                        <div class="card card-hoverable">
+                            <div class="card-body">
+                                @if( COUNT($jobcards) )
+                                    <h6 class="card-title float-left mb-0 ml-2">Recent Jobcards</h6>
+                                    <div class="table-responsive table-hover">
+                                        <table class="table mt-3 border-top">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 30%">Customer</th>
+                                                    <th style="width: 20%">Start Date</th>
+                                                    <th style="width: 20%">End Date</th>
+                                                    <th style="width: 14%">Due</th>
+                                                    <th class="d-sm-none d-md-table-cell">Priority</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($jobcards as $jobcard)
+                                                    <tr class='clickable-row' data-href='/jobcards/{{ $jobcard->id }}'>
+                                                        <td data-toggle="tooltip" data-placement="{{ COUNT($jobcards) >= 3 ? 'top':'bottom' }}" title="{{ $jobcard->description }}">{{ $jobcard->title ? $jobcard->title:'____' }}</td>
+                                                        <td>{{ $jobcard->start_date ? Carbon\Carbon::parse($jobcard->start_date)->format('d M Y'):'____' }}</td>
+                                                        <td>{{ $jobcard->end_date ? Carbon\Carbon::parse($jobcard->end_date)->format('d M Y'):'____' }}</td>    
+                                                        <td class="d-none d-md-table-cell">
+                                                            @php
+                                                                $deadline = round((strtotime($jobcard->end_date)  
+                                                                                - strtotime(\Carbon\Carbon::now()->toDateTimeString()))  
+                                                                                / (60 * 60 * 24)) 
+                                                            @endphp
+                                                            @if($deadline > 0)
+                                                                {{ $deadline == 1 ? $deadline.' day' : $deadline.' days'  }}
+                                                            @else
+                                                                <i class="icon-exclamation icons mr-1 text-danger"></i>
+                                                                <span class="text-danger">due</span>
+                                                            @endif
+                                                        </td>                                              
+                                                        <td class="d-none d-md-table-cell">
+                                                            @if($jobcard->priority)
+                                                                <div  data-toggle="tooltip" data-placement="top" title="{{ $jobcard->priority->description }}"
+                                                                    class="badge badge-success" style="min-width: 80px;background:{{ $jobcard->priority->color_code }};">{{ $jobcard->priority ? $jobcard->priority->name:'____' }}</div>
+                                                            @else
+                                                                ____
+                                                            @endif    
+                                                        </td>  
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between flex-column flex-sm-row mt-4">
+                                        <p class="mb-3 ml-3 mb-sm-0"><strong>{{ $jobcards->total() }}</strong>{{ $jobcards->total() == 1 ? ' result': '  results' }} found</p>
+                                        <nav>
+                                            {{ $jobcards->links() }}
+                                        </nav>
+                                    </div>
+                                    <div class="d-flex float-right mt-2">
+                                        <a href= "{{ route('jobcards') }}" class="btn btn-primary btn-sm">View All
+                                            <i class="icon-arrow-right-circle icons ml-1"></i>
+                                        </a>
+                                    </div>
+                                @else
+                                    <h6 class="card-title float-left mb-0 ml-2">No Jobcards</h6>
+                                    <div class="col-4 offset-4">
+                                        <div data-toggle="tooltip" data-placement="top" title="Create a new jobcard">
+                                            <a href="/jobcards/create" class="btn btn-success p-5 w-100 animated-strips">                                            
+                                                <i class="d-block icon-sm icon-flag icons" style="font-size: 25px;"></i>
+                                                <span class="d-block mt-4">Create Jobcard</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                         </div>
                     </div>
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
         </div>
         <div class="col-md-6 col-lg-4 grid-margin stretch-card">
             <div class="card card-hoverable">
@@ -256,6 +436,24 @@
                                     <span class="text-muted ml-auto">05 Jul 2018 @ 08:07</span>
                                 </div>
                             </div>
+=======
+            <div class="col-md-6 col-lg-4 grid-margin stretch-card">
+                <div class="card card-hoverable">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="card-title">Recent Activity</h6>
+                        </div>
+                        <p class="card-description">Activity by staff members</p>
+                        @foreach($recentActivities as $position => $recentActivity)
+                                                
+                            @include('layouts.recentActivity.activity-layout-2')
+                            
+                        @endforeach
+                        <div class="d-flex float-right mt-2">
+                            <button class="btn btn-primary btn-sm">View All
+                                <i class="icon-arrow-right-circle icons ml-1"></i>
+                            </button>
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                         </div>
                     </div>                        
                     <div class="d-flex float-right mt-2">

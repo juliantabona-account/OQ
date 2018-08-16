@@ -27,6 +27,12 @@ class ProcessForm extends Model
 
     public function steps()
     {
+<<<<<<< HEAD
         return $this->hasMany('App\ProcessFormSteps');
+=======
+        return $this->belongsToMany('App\ProcessFormSteps', 'process_form_step_allocation', 'process_form_id', 'step_id')
+                    ->withPivot('process_form_id', 'step_id')
+                    ->withTimestamps();
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
     }
 }
