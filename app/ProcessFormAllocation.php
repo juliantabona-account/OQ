@@ -19,7 +19,7 @@ class ProcessFormAllocation extends Model
      *
      * @var string
      */
-    protected $table = 'process_form_allocation';
+    protected $table = 'process_form_allocations';
     /**
      * The attributes that are mass assignable.
      *
@@ -32,10 +32,5 @@ class ProcessFormAllocation extends Model
     public function processable()
     {
         return $this->morphTo();
-    }
-
-    public function processForm()
-    {
-        return $this->belongsTo('App\ProcessForm', 'process_form_id');
     }
 }

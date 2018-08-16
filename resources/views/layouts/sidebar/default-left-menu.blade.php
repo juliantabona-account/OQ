@@ -12,7 +12,7 @@
                         {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
                         </p>
                         <p class="designation">
-                            {{ Auth::user()->position  != ''? '-- '.Auth::user()->position.' --':'' }}
+                            {{ Auth::user()->position  != ''? '-- '.Auth::user()->position->name.' --':'' }}
                         </p>
                     </div>
                 </a>

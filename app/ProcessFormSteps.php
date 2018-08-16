@@ -6,6 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcessFormSteps extends Model
 {
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of d032024... General Fix For Jobcard, Client, Contractor
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $casts = [
+        'step_instruction' => 'collection',
+    ];
+
+<<<<<<< HEAD
+=======
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
+=======
+>>>>>>> parent of d032024... General Fix For Jobcard, Client, Contractor
     protected $table = 'process_form_steps';
     /**
      * The attributes that are mass assignable.
@@ -25,6 +43,9 @@ class ProcessFormSteps extends Model
     {
         return $this->hasMany('App\Jobcard', 'step_id');
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
 
     public function fields()
     {
@@ -32,4 +53,7 @@ class ProcessFormSteps extends Model
                     ->withPivot('step_id', 'field_id')
                     ->withTimestamps();
     }
+>>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
+=======
+>>>>>>> parent of d032024... General Fix For Jobcard, Client, Contractor
 }
