@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use PDF;
 use Auth;
 use Image;
 use Storage;
@@ -41,6 +42,8 @@ class JobcardController extends Controller
         if (count($jobcard)) {
             if ($jobcard->client()->count()) {
                 $contacts = $jobcard->client->contacts()->paginate(3, ['*'], 'contacts');
+            } else {
+                $contacts = null;
             }
 
             $contractors = $jobcard->contractorsList()->paginate(5, ['*'], 'contractors');
@@ -307,7 +310,7 @@ class JobcardController extends Controller
             'status_id' => 1,
             'priority_id' => $request->input('priority'),
             'cost_center_id' => $request->input('cost_center'),
-            'branch_id' => $request->input('branch'),
+            'company_branch_id' => $request->input('branch'),
             'category_id' => $request->input('category'),
             'img_url' => $image_url,
             'created_by' => Auth::id(),
@@ -323,11 +326,12 @@ class JobcardController extends Controller
                 'viewed_by' => Auth::id(),
             ]);
 
-            $jobcardActivity = $jobcard->recentActivity()->create([
+            $jobcardActivity = $jobcard->recentActivities()->create([
                 'activity' => [
                                 'type' => 'created',
                             ],
                 'created_by' => Auth::id(),
+                'company_branch_id' => Auth::user()->company_branch_id,
             ]);
         }
 
@@ -345,6 +349,16 @@ class JobcardController extends Controller
     {
     }
 
+    public function downloadPdf($jobcard_id)
+    {
+        $jobcard = Jobcard::find($jobcard_id);
+        $pdf = PDF::loadView('pdf_file', array('jobcard' => $jobcard));
+
+        return $pdf->stream('jobcard_'.$jobcard_id.'.pdf');
+
+        return view('pdf_file', compact('jobcard'));
+    }
+
     public function removeClient(Request $request, $jobcard_id, $client_id)
     {
         $jobcard = Jobcard::find($jobcard_id);
@@ -356,13 +370,50 @@ class JobcardController extends Controller
             //Alert update success
             $request->session()->flash('alert', array('Client removed successfully!', 'icon-trash icons', 'success'));
 
-            $jobcardActivity = $jobcard->recentActivity()->create([
+            $jobcardActivity = $jobcard->recentActivities()->create([
                 'activity' => [
                     'type' => 'client_removed',
                     'company' => $company,
                 ],
                 'created_by' => Auth::id(),
+                'company_branch_id' => Auth::user()->company_branch_id,
             ]);
+        }
+
+        return redirect()->route('jobcard-show', [$jobcard_id]);
+    }
+
+    public function selectContractor(Request $request, $jobcard_id, $contractor_id)
+    {
+        $jobcard = Jobcard::find($jobcard_id);
+        $company = Company::find($contractor_id);
+
+        if ($request->input('selected_contractor') == 'on') {
+            $value = $contractor_id;
+        } else {
+            $value = null;
+        }
+
+        $updated = $jobcard->update([
+            'select_contractor_id' => $value,
+        ]);
+
+        if ($updated) {
+            $jobcardActivity = $jobcard->recentActivities()->create([
+                'activity' => [
+                                'type' => 'contractor_selected',
+                                'jobcard' => $jobcard,
+                                'company' => $company,
+                            ],
+                'created_by' => Auth::id(),
+                'company_branch_id' => Auth::user()->company_branch_id,
+            ]);
+
+            //Alert update success
+            $request->session()->flash('alert', array('Changes saved successfully!', 'icon-check icons', 'success'));
+        } else {
+            //Alert update success
+            $request->session()->flash('alert', array('Something went wrong updating. Try again', 'icon-check icons', 'danger'));
         }
 
         return redirect()->route('jobcard-show', [$jobcard_id]);
@@ -378,12 +429,13 @@ class JobcardController extends Controller
             //Alert update success
             $request->session()->flash('alert', array('Contractor removed successfully!', 'icon-trash icons', 'success'));
 
-            $jobcardActivity = $jobcard->recentActivity()->create([
+            $jobcardActivity = $jobcard->recentActivities()->create([
                 'activity' => [
                     'type' => 'contractor_removed',
                     'company' => $company,
                 ],
                 'created_by' => Auth::id(),
+                'company_branch_id' => Auth::user()->company_branch_id,
             ]);
         }
 
@@ -430,17 +482,25 @@ class JobcardController extends Controller
 
         //  Record new activity
         $jobcard = Jobcard::find($jobcard_id);
-        $jobcardActivity = $jobcard->recentActivity()->create([
+        $jobcardActivity = $jobcard->recentActivities()->create([
             'activity' => [
                 'type' => 'status_changed',
                 'old_status' => $request->input('old_step_name'),
                 'new_status' => $request->input('new_step_name'),
             ],
             'created_by' => Auth::id(),
+            'company_branch_id' => Auth::user()->company_branch_id,
         ]);
 
         //Return to the jobcard
 
         return redirect()->route('jobcard-show', $jobcard_id);
+    }
+
+    public function showStepJobcard($step_id)
+    {
+        $jobcards = Jobcard::where('step_id', $step_id)->paginate(10);
+
+        return view('jobcard/index', compact('jobcards'));
     }
 }

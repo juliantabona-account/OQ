@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 Relation::morphMap([
     'jobcard' => 'App\Jobcard',
-    'company' => 'App\Company',
+    'company_branch' => 'App\CompanyBranch',
     'user' => 'App\User',
     'document' => 'App\Document',
 ]);
@@ -23,7 +23,7 @@ class RecentActivity extends Model
      * @var array
      */
     protected $fillable = [
-        'activity', 'created_by',
+        'activity', 'company_branch_id', 'created_by',
     ];
 
     /**
@@ -37,5 +37,10 @@ class RecentActivity extends Model
     public function createdBy()
     {
         return $this->belongsTo('App\User', 'created_by');
+    }
+
+    public function jobcard()
+    {
+        return $this->belongsTo('App\Jobcard', 'trackable_id');
     }
 }

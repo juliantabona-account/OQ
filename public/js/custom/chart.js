@@ -5,17 +5,18 @@ $(function () {
    */
   'use strict';
   var data = {
-    labels: ["Open", "Pending", "Unpaid", "Overdue", "Closed", "Reopened"],
+    labels: ["Requests", "Authorized", "Currently Reviewed", "Inspection", "Waiting Signoff", "Completed", "Overdue"],
     datasets: [{
       label: '# of Votes',
-      data: [48, 19, 22, 12, 36, 3],
+      data: [48, 19, 22, 12, 36, 3, 5],
       backgroundColor: [
         'rgba(54, 162, 235, 1)',
         'rgba(255, 206, 86, 1)',
         'rgba(0, 0, 0, 0.2)',
-        'rgba(255, 99, 132, 1)',
         'rgba(0, 0, 0, 0.2)',
-        'rgba(0, 0, 0, 0.2)'
+        'rgba(0, 0, 0, 0.2)',
+        'rgba(0, 0, 0, 0.2)',
+        'rgba(255, 99, 132, 1)',
       ],
       borderWidth: 1
     }]

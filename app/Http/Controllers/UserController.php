@@ -20,21 +20,26 @@ class UserController extends Controller
 {
     public function index()
     {
-        return view('profile.index');
+        $profiles = User::paginate(5, ['*'], 'page');
+
+        return view('profile.index', compact('profiles'));
     }
 
-    public function show()
+    public function show($profile_id)
     {
-        return view('profile.show');
+        $profile = User::find($profile_id);
+
+        return view('profile.show', compact('profile'));
     }
 
-    public function edit()
+    public function edit($profile_id)
     {
+        $profile = User::find($profile_id);
         $general_fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'phone_ext', 'phone_num', 'email', 'company_id', 'position'];
         $avatar_fields = ['avatar'];
         $security_fields = ['current_password', 'password', 'password_confirmation'];
 
-        return view('profile.edit', compact('general_fields', 'avatar_fields', 'security_fields'));
+        return view('profile.edit', compact('profile', 'general_fields', 'avatar_fields', 'security_fields'));
     }
 
     public function store(Request $request)
@@ -103,7 +108,7 @@ class UserController extends Controller
                 $client = Company::find($request->input('client_id'));
                 $client->contacts()->attach([$user->id => ['created_by' => Auth::id()]]);
                 //  Record contact added to company activity
-                $companyActivity = $client->recentActivity()->create([
+                $companyActivity = $client->recentActivities()->create([
                     'activity' => [
                                     'type' => 'contact_added',
                                     'contact' => $user,
@@ -119,7 +124,7 @@ class UserController extends Controller
         if (!empty($request->input('jobcard_id'))) {
             //  Record contact added at this jobcard
             $jobcard = Jobcard::find($request->input('jobcard_id'));
-            $jobcardActivity = $jobcard->recentActivity()->create([
+            $jobcardActivity = $jobcard->recentActivities()->create([
                 'activity' => [
                                 'type' => 'contact_added',
                                 'contact' => $user,
@@ -133,7 +138,7 @@ class UserController extends Controller
         }
     }
 
-    public function update(Request $request, $user_id)
+    public function update(Request $request, $profile_id)
     {
         if ($request->hasFile('avatar')) {
             $avatarFile = $request->only('avatar')['avatar'];
@@ -157,11 +162,19 @@ class UserController extends Controller
             'first_name' => 'required|max:255|min:3',
             'last_name' => 'required|max:255|min:3',
             'gender' => 'required',
-            'date_of_birth' => 'date_format:"Y-m-d"|required|before:today',
             'email' => 'required|max:255',
             'phone_ext' => 'required|max:3|min:3',
             'phone_num' => 'required|max:13',
         );
+
+        //If we have the date of birth then validate entries
+        if ($request->input('date_of_birth')) {
+            // Rules for password changes
+            $rules = array_merge($rules, [
+                'date_of_birth' => 'date_format:"Y-m-d"|required|before:today',
+                ]
+            );
+        }
 
         //If we have the image then validate it
         if ($request->hasFile('avatar')) {
@@ -279,7 +292,7 @@ class UserController extends Controller
         }
 
         //Get the users profile
-        $profile = Auth::user();
+        $profile = User::find($profile_id);
         //Update profile
         $profile->first_name = $request->input('first_name');
         $profile->last_name = $request->input('last_name');
@@ -296,7 +309,7 @@ class UserController extends Controller
             $profile->password = Hash::make($request->input('password'));
         }
 
-        $profile->company_id = $request->input('company_id');
+        $profile->company_branch_id = $request->input('company_id');
         $profile->position = $request->input('position');
 
         //If we have the image, update it as well
@@ -308,25 +321,27 @@ class UserController extends Controller
 
         //If we have a new document, reference it as well
         if ($request->hasFile('doc_file')) {
-            $comment = Auth::user()->documents()->create([
+            $comment = $profile->documents()->create([
                 'url' => $doc_file_name,
                 'name' => $request->input('doc_name'),
-                'created_by' => Auth::id(),
+                'created_by' => $profile->id,
             ]);
         }
 
         //Alert update success
         $request->session()->flash('alert', array('Profile updated successfully!', 'icon-check icons', 'success'));
 
-        return redirect('/profiles/'.Auth::id());
+        return redirect('/profiles/'.$profile->id);
+
+        return redirect()->route('profile-show', $profile->id);
     }
 
     public function delete()
     {
-        return view('home');
+        //return view('home');
     }
 
-    public function deleteDocument(Request $request, $user_id, $doc_id)
+    public function deleteDocument(Request $request, $profile_id, $doc_id)
     {
         $document = Document::find($doc_id);
 

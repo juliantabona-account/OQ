@@ -11,160 +11,84 @@
 |
 */
 
+use App\User;
+use Illuminate\Http\Request;
+use App\Mail\EventRegistered;
+
 Route::get('/', function () {
-    return view('auth.login');
-})->middleware('guest');
-
-Route::get('/overview', function () {
-    return view('overview.index');
-})->middleware('auth');
-
-Route::group(['prefix' => 'profiles',  'middleware' => 'auth'], function () {
-    Route::get('/', 'UserController@index')->name('profiles');
-    Route::post('/', 'UserController@store')->name('profile-store');
-    Route::get('/{profile_id}', 'UserController@show')->name('profile-show');
-    Route::put('/{profile_id}', 'UserController@update')->name('profile-update');
-    Route::get('/{profile_id}/edit', 'UserController@edit');
-    Route::delete('/{profile_id}/docs/{doc_id}', 'UserController@deleteDocument')->name('profile-doc-delete');
+    return view('index');
 });
 
-/*  JOBCARDS    create, edit, save, delete, display */
-Route::group(['prefix' => 'jobcards',  'middleware' => 'auth'], function () {
-    Route::get('/', 'JobcardController@index')->name('jobcards');
-    Route::post('/', 'JobcardController@store')->name('jobcard-store');
-    Route::get('/create', 'JobcardController@create')->name('jobcard-create');
+Route::post('/register', function (Request $request) {
+    //  If we have the email provided
+    if (!empty($request->input('email'))) {
+        // Get the user from the database
+        $user = User::where('email', $request->input('email'))->first();
 
-    /*  REMOVE THIS-> */
-    /*  REMOVE THIS-> */
+        //  If the user exists
+        if (count($user)) {
+            //  Find out if they have payed successfully before
+            $hasTransactedBefore = $user->transactions->where('success_state', 1)->count();
 
-    Route::get('/open', function () {
-        return view('jobcard.open');
-    });
+            //  If they have paid
+            if ($hasTransactedBefore != 0) {
+                //  Notify the user
+                $request->session()->flash('alert', array('You have already registered and paid for this event! Visit your email to verify. Thank you', 'success'));
 
-    Route::get('/pending', function () {
-        return view('jobcard.pending');
-    });
+                return back();
+            }
 
-    Route::get('/unpaid', function () {
-        return view('jobcard.unpaid');
-    });
+            //  Go back and let the user know they have paid before
+        } else {
+            if ($request->input('abortRegistration') == '1') {
+                //  Notify the user
+                $request->session()->flash('alert', array('Registration with "'.$request->input('email').'" does not exist. Please re-enter the email you used when registering previously otherwise return to <a href="/">Registration</a>', 'success'));
 
-    Route::get('/overdue', function () {
-        return view('jobcard.overdue');
-    });
+                return back();
+            } else {
+                //  Create a new user
+                $user = User::create($request->all());
 
-    Route::get('/all', function () {
-        return view('jobcard.all');
-    });
+                Mail::to($request->input('email'))->send(new EventRegistered($user));
 
-    /*  <-REMOVE THIS */
-    /*  <-REMOVE THIS */
+                //Alert update success
+                $request->session()->flash('alert', array('You have been registered successfully! Complete your application by paying for your seat', 'success'));
+            }
+        }
 
-    Route::get('/{jobcard_id}', 'JobcardController@show')->name('jobcard-show');
-    Route::put('/{jobcard_id}', 'JobcardController@update')->name('jobcard-update');
-    Route::delete('/{jobcard_id}', 'JobcardController@delete')->name('jobcard-delete');
+        if (count($user)) {
+            $transaction = $user->transactions()->create([
+                'user_id' => $user->id,
+            ]);
+            session(['user' => $user, 'transaction' => $transaction]);
+        }
 
-    Route::put('/{jobcard_id}/progress', 'JobcardController@updateProgress')->name('jobcard-update-progress');
-    //Route::get('/{jobcard_id}/edit', 'JobcardController@edit')->name('jobcard-edit');
-    Route::delete('/{jobcard_id}/client/{client_id}', 'JobcardController@removeClient')->name('jobcard-remove-client');
-    Route::delete('/{jobcard_id}/contractors/{contractor_id}/{pivot_id}', 'JobcardController@removeContractor')->name('jobcard-remove-contractor');
+        return redirect('/payment-options');
+    } else {
+        $request->session()->flash('alert', array('Please register!', 'danger'));
 
-    /*  REMOVE THIS-> */
-    /*  REMOVE THIS-> */
-    Route::get('/jobcards/1/views/1', function () {
-        return view('jobcard.views');
-    });
+        return redirect('/');
+    }
 
-    Route::get('/jobcards/1/viewers', function () {
-        return view('jobcard.viewers');
-    });
-
-    Route::get('/jobcards/1/viewers/1', function () {
-        return view('jobcard.viewer');
-    });
-    /*  <-REMOVE THIS */
-    /*  <-REMOVE THIS */
+    //Mail::to( $request->input('email_address'))->send(new EventRegistered($user));
+    //} else {
+        //$request->session()->flash('status','You have already Registered For this Event');
+        // return view('welcome');
+    //}
 });
 
-/*  COMPANIES    create, edit, save, delete, display */
-Route::group(['prefix' => 'companies',  'middleware' => 'auth'], function () {
-    //Route::get('/', 'CompanyController@index')->name('companies');
-    Route::post('/', 'CompanyController@store')->name('company-store');
-    //Route::get('/create', 'CompanyController@create')->name('company-create');
-    //Route::get('/{client_id}', 'CompanyController@show')->name('company-show');
-    //Route::put('/{client_id}', 'CompanyController@update')->name('company-update');
-    //Route::delete('/{client_id}', 'CompanyController@delete')->name('company-delete');
-    //Route::get('/{client_id}/edit', 'CompanyController@edit')->name('company-edit');
+Route::get('/payment-options', function () {
+    return view('payment');
 });
 
-/*  TO BE TRASHED */
-/*  TO BE TRASHED */
-/*  TO BE TRASHED */
-/*  TO BE TRASHED */
-/*  TO BE TRASHED */
-/*  TO BE TRASHED */
-
-/*  CONTACTS    create, edit, save, delete, display */
-Route::group(['prefix' => 'contacts',  'middleware' => 'auth'], function () {
-    //Route::get('/', 'ContactController@index')->name('contacts');
-    Route::post('/', 'ContactController@store')->name('contact-store');
-    //Route::get('/create', 'ContactController@create')->name('contact-create');
-    //Route::get('/{contact_id}', 'ContactController@show')->name('contact-show');
-    //Route::put('/{contact_id}', 'ContactController@update')->name('contact-update');
-    //Route::delete('/{contact_id}', 'ContactController@delete')->name('contact-delete');
-    //Route::get('/{contact_id}/edit', 'ContactController@edit')->name('contact-edit');
+Route::get('/paymentSuccessful', function () {
+    return view('paymentSuccessful');
 });
 
-/*  CLIENTS    create, edit, save, delete, display */
-Route::group(['prefix' => 'clients',  'middleware' => 'auth'], function () {
-    //Route::get('/', 'ClientController@index')->name('clients');
-    Route::post('/', 'ClientController@store')->name('client-store');
-    //Route::get('/create', 'ClientController@create')->name('client-create');
-    //Route::get('/{client_id}', 'ClientController@show')->name('client-show');
-    //Route::put('/{client_id}', 'ClientController@update')->name('client-update');
-    //Route::delete('/{client_id}', 'ClientController@delete')->name('client-delete');
-    //Route::get('/{client_id}/edit', 'ClientController@edit')->name('client-edit');
+Route::get('/paymentUnSuccessful', function () {
+    return view('paymentUnSuccessful');
 });
 
-/*  CONTRACTORS    create, edit, save, delete, display */
-Route::group(['prefix' => 'contractors',  'middleware' => 'auth'], function () {
-    //Route::get('/', 'ContractorController@index')->name('contractors');
-    Route::post('/', 'ContractorController@store')->name('contractor-store');
-    //Route::get('/create', 'ContractorController@create')->name('contractor-create');
-    //Route::get('/{contractor_id}', 'ContractorController@show')->name('contractor-show');
-    //Route::put('/{contractor_id}', 'ContractorController@update')->name('contractor-update');
-    //Route::delete('/{contractor_id}', 'ContractorController@delete')->name('contractor-delete');
-    //Route::get('/{contractor_id}/edit', 'ContractorController@edit')->name('contractor-edit');
+Route::get('/emailtemplate', function () {
+    return view('sendEmailTemplate');
 });
-
-Route::get('/clients', function () {
-    return view('client.index');
-});
-
-Route::get('/clients/1', function () {
-    return view('client.show');
-});
-
-Route::get('/contractors', function () {
-    return view('contractor.index');
-});
-
-Route::get('/contractors/gaborone', function () {
-    return view('contractor.gaborone');
-});
-
-Route::get('/contractors/1', function () {
-    return view('contractor.show');
-});
-
-Route::get('/calendar', function () {
-    return view('calendar.index');
-});
-
-Route::get('/search', function () {
-    return view('search.default');
-});
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
