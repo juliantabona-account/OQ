@@ -7,10 +7,7 @@ use Image;
 use Storage;
 use Redirect;
 use Validator;
-use App\User;
-use App\Company;
-use App\Jobcard;
-use App\Document;
+use App\UserDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\File;
@@ -20,125 +17,29 @@ class UserController extends Controller
 {
     public function index()
     {
-        $profiles = User::paginate(5, ['*'], 'page');
-
-        return view('profile.index', compact('profiles'));
+        return view('profile.index');
     }
 
-    public function show($profile_id)
+    public function show()
     {
-        $profile = User::find($profile_id);
-
-        return view('profile.show', compact('profile'));
+        return view('profile.show');
     }
 
-    public function edit($profile_id)
+    public function edit()
     {
-        $profile = User::find($profile_id);
-        $general_fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'phone_ext', 'phone_num', 'email', 'company_id', 'position'];
+        $general_fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'mobile_ext', 'mobile_num', 'email', 'company_id', 'position_id'];
         $avatar_fields = ['avatar'];
         $security_fields = ['current_password', 'password', 'password_confirmation'];
 
-        return view('profile.edit', compact('profile', 'general_fields', 'avatar_fields', 'security_fields'));
+        return view('profile.edit', compact('general_fields', 'avatar_fields', 'security_fields'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $user_id)
     {
-        // Rules for form data
-        $rules = array(
-            //General Validation
-            'user_first_name' => 'required|max:255|min:3',
-            'user_last_name' => 'max:255',
-            'user_phone_ext' => 'max:3',
-            'user_phone_num' => 'max:13',
-        );
-
-        // This will check for empty string and any null values for the provided email
-        // If it is empty save as NULL, because empty strings cause issues when saving for
-        // fields that should be UNIQUE in the database, but NULL values are allowed even
-        // when you have duplicate entries
-        if (!empty($request->input('user_email'))) {
-            // Rules for password changes
-            $rules = array_merge($rules, [
-                'user_email' => 'unique:users,email',
-                ]
-            );
-        } else {
-            $request->merge(['user_email' => null]);
-        }
-
-        //Customized error messages
-        $messages = [
-            //General Validation
-            'user_first_name.required' => 'Enter first name',
-            'user_first_name.max' => 'First name cannot be more than 255 characters',
-            'user_first_name.min' => 'First name must be atleast 3 characters',
-            'user_last_name.max' => 'Last name cannot be more than 255 characters',
-            'user_email.unique' => 'This email is already being used',
-            'user_phone_ext.max' => 'Phone number extension cannot be more than 3 characters',
-            'user_phone_num.max' => 'Phone number cannot be more than 13 characters',
-          ];
-
-        // Now pass the input and rules into the validator
-        $validator = Validator::make($request->all(), $rules, $messages);
-
-        // Check to see if validation fails or passes
-        if ($validator->fails()) {
-            //Alert update error
-            $request->session()->flash('alert', array('Couldn\'t create contact, check your information!', 'icon-exclamation icons', 'danger'));
-
-            return Redirect::back()->withErrors($validator)->withInput();
-        }
-
-        //Create the client contact
-        $user = User::create([
-            'first_name' => $request->input('user_first_name'),
-            'last_name' => $request->input('user_last_name'),
-            'position' => $request->input('user_position'),
-            'phone_ext' => $request->input('user_phone_ext'),
-            'phone_num' => $request->input('user_phone_num'),
-            'email' => $request->input('user_email'),
-            'created_by' => Auth::id(),
-        ]);
-
-        //If the contact was created successfully
-        if ($user) {
-            if (!empty($request->input('client_id'))) {
-                //Save the contact to the client company
-                $client = Company::find($request->input('client_id'));
-                $client->contacts()->attach([$user->id => ['created_by' => Auth::id()]]);
-                //  Record contact added to company activity
-                $companyActivity = $client->recentActivities()->create([
-                    'activity' => [
-                                    'type' => 'contact_added',
-                                    'contact' => $user,
-                                ],
-                    'created_by' => Auth::id(),
-                ]);
-            }
-        }
-
-        //Alert update success
-        $request->session()->flash('alert', array('Contact added successfully!', 'icon-check icons', 'success'));
-
-        if (!empty($request->input('jobcard_id'))) {
-            //  Record contact added at this jobcard
-            $jobcard = Jobcard::find($request->input('jobcard_id'));
-            $jobcardActivity = $jobcard->recentActivities()->create([
-                'activity' => [
-                                'type' => 'contact_added',
-                                'contact' => $user,
-                            ],
-                'created_by' => Auth::id(),
-            ]);
-
-            return redirect()->route('jobcard-show', $request->input('jobcard_id'));
-        } else {
-            return Redirect::back();
-        }
+        return $request->all();
     }
 
-    public function update(Request $request, $profile_id)
+    public function update(Request $request, $user_id)
     {
         if ($request->hasFile('avatar')) {
             $avatarFile = $request->only('avatar')['avatar'];
@@ -162,19 +63,11 @@ class UserController extends Controller
             'first_name' => 'required|max:255|min:3',
             'last_name' => 'required|max:255|min:3',
             'gender' => 'required',
+            'date_of_birth' => 'date_format:"Y-m-d"|required|before:today',
             'email' => 'required|max:255',
-            'phone_ext' => 'required|max:3|min:3',
-            'phone_num' => 'required|max:13',
+            'mobile_ext' => 'required|max:3|min:3',
+            'mobile_num' => 'required|max:13',
         );
-
-        //If we have the date of birth then validate entries
-        if ($request->input('date_of_birth')) {
-            // Rules for password changes
-            $rules = array_merge($rules, [
-                'date_of_birth' => 'date_format:"Y-m-d"|required|before:today',
-                ]
-            );
-        }
 
         //If we have the image then validate it
         if ($request->hasFile('avatar')) {
@@ -221,11 +114,11 @@ class UserController extends Controller
             'date_of_birth.before' => 'Date of birth must be a past date',
             'email.required' => 'Enter your email',
             'email.max' => 'Email cannot be more than 255 characters',
-            'phone_ext.required' => 'Enter your phone number extension',
-            'phone_ext.max' => 'Phone number extension cannot be more than 3 characters',
-            'phone_ext.min' => 'Phone number extension must be atleast 3 characters',
-            'phone_num.required' => 'Enter your phone number',
-            'phone_num.max' => 'Phone number cannot be more than 13 characters',
+            'mobile_ext.required' => 'Enter your phone number extension',
+            'mobile_ext.max' => 'Phone number extension cannot be more than 3 characters',
+            'mobile_ext.min' => 'Phone number extension must be atleast 3 characters',
+            'mobile_num.required' => 'Enter your phone number',
+            'mobile_num.max' => 'Phone number cannot be more than 13 characters',
             //Avatar Validation
             'avatar.mimes' => 'Avatar must be an image e.g) jpeg,jpg,png,gif',
             'avatar.max' => 'Avatar should not be more than 2MB in size',
@@ -292,7 +185,7 @@ class UserController extends Controller
         }
 
         //Get the users profile
-        $profile = User::find($profile_id);
+        $profile = Auth::user();
         //Update profile
         $profile->first_name = $request->input('first_name');
         $profile->last_name = $request->input('last_name');
@@ -300,8 +193,8 @@ class UserController extends Controller
         $profile->date_of_birth = $request->input('date_of_birth');
         //$profile->bio = $request->input('bio');
         $profile->address = $request->input('address');
-        $profile->phone_ext = $request->input('phone_ext');
-        $profile->phone_num = $request->input('phone_num');
+        $profile->mobile_ext = $request->input('mobile_ext');
+        $profile->mobile_num = $request->input('mobile_num');
         $profile->email = $request->input('email');
 
         //If we have new password, update it as well
@@ -309,23 +202,8 @@ class UserController extends Controller
             $profile->password = Hash::make($request->input('password'));
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        $profile->company_branch_id = $request->input('company_id');
-=======
-        /*
-            FIX THE CODE BELOW TO SAVE THE USERS CURRENT BRACNCH
-            WE USED TO SAVE THE USERS COMPANY BUT NOW WE WANT TO
-            SAVE THE USERS BRANCH ID INSTEAD
-
-            $profile->company_branch_id = $request->input('company_id');
-        */
-
->>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
-=======
-        $profile->company_branch_id = $request->input('company_id');
->>>>>>> parent of d032024... General Fix For Jobcard, Client, Contractor
-        $profile->position = $request->input('position');
+        $profile->company_id = $request->input('company_id');
+        $profile->position_id = $request->input('position_id');
 
         //If we have the image, update it as well
         if ($request->hasFile('avatar')) {
@@ -336,29 +214,26 @@ class UserController extends Controller
 
         //If we have a new document, reference it as well
         if ($request->hasFile('doc_file')) {
-            $comment = $profile->documents()->create([
+            $comment = Auth::user()->documents()->create([
                 'url' => $doc_file_name,
                 'name' => $request->input('doc_name'),
-                'created_by' => $profile->id,
             ]);
         }
 
         //Alert update success
         $request->session()->flash('alert', array('Profile updated successfully!', 'icon-check icons', 'success'));
 
-        return redirect('/profiles/'.$profile->id);
-
-        return redirect()->route('profile-show', $profile->id);
+        return redirect('/profiles/'.Auth::id());
     }
 
     public function delete()
     {
-        //return view('home');
+        return view('home');
     }
 
-    public function deleteDocument(Request $request, $profile_id, $doc_id)
+    public function deleteDocument(Request $request, $user_id, $doc_id)
     {
-        $document = Document::find($doc_id);
+        $document = UserDocument::find($doc_id);
 
         if ($document) {
             $document_file = str_replace(env('AWS_URL'), '', $document->url);

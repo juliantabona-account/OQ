@@ -13,10 +13,8 @@ class CreateProcessFormStepsTable extends Migration
     {
         Schema::create('process_form_steps', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('description');
-            $table->string('icon')->nullable();
-            $table->integer('created_by')->unsigned();
+            $table->text('step_instruction');
+            $table->integer('process_form_id')->unsigned();
             $table->timestamps();
         });
     }

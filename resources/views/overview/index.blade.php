@@ -32,9 +32,9 @@
                             <div class="card card-clickable" data-href="{{ route('show-step-jobcard', [$processStep->id]) }}">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-md-center">
-                                        <i class="icon-lg {{ $processStep->icon }}"></i>
+                                        <i class="icon-lg {{ $processStep->step_instruction['icon'] }}"></i>
                                         <div class="ml-3">
-                                            <p class="mb-0">{{ $processStep->name }}</p>
+                                            <p class="mb-0">{{ $processStep->step_instruction['name'] }}</p>
                                             <h6>{{ $processStep->jobcards->count() }}</h6>
 >>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
                                         </div>
