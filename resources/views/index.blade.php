@@ -18,6 +18,69 @@
 </head>
 <body>
 	<!-- main -->
+
+
+	<div class="registration_info row">
+
+                    
+		<section class="col-sm-12">
+															<a id="main-content"></a>
+										<h2 style="color: #000;text-align:center;margin:30px 0 20px;">Registration</h2>
+																																														  <div class="region region-content">
+<section id="block-system-main" class="block block-system clearfix">
+
+
+<article id="node-123" class="node node-page clearfix" about="/registration" typeof="foaf:Document">
+<header>
+<span property="dc:title" content="Registration" class="rdf-meta element-hidden"></span><span property="sioc:num_replies" content="0" datatype="xsd:integer" class="rdf-meta element-hidden"></span>      </header>
+<div class="field field-name-body field-type-text-with-summary field-label-hidden" style="
+padding: 15px;
+border: 1px solid #a9a9a9;
+box-shadow: 0px -2px 5px #cccccc;
+"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Registration for International Data Week will open&nbsp;soon.&nbsp;The cost to attend the meeting is as follows:</p>
+<table border="1" cellpadding="1" cellspacing="1" style="
+width: 100%;
+"><tbody><tr><td width="25%">&nbsp;</td>
+<td width="25%"><b>Students</b></td>
+<td width="25%"><b>Individuals from&nbsp;<br><a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/906519" target="_blank">Low and Middle Income Countries (LMIC)</a></b></td>
+<td width="25%"><b>All Others</b></td>
+</tr><tr><td>Early Bird Rate&nbsp;<br><strong><i>Deadline: 30 September 2018</i></strong></td>
+<td>2,000 Botswana P (BWP)</td>
+<td>2,000&nbsp;(BWP)</td>
+<td>6,000 (BWP)</td>
+</tr><tr><td>Standard Rate&nbsp;<br><strong><i>Deadline: 4 November 2018</i></strong></td>
+<td>2,500&nbsp;(BWP)</td>
+<td>3,000&nbsp;(BWP)</td>
+<td>7,000 (BWP)</td>
+</tr><tr><td>
+<p>Onsite Rate<br><strong><i>5-8 November 2018</i></strong></p>
+</td>
+<td>
+<p>3,500 (BWP)</p>
+</td>
+<td>4,000&nbsp;(BWP)</td>
+<td>9,000 (BWP)</td>
+</tr></tbody></table>
+<p style="
+padding-top: 5px;
+border-top: 1px solid #d4d4d4;
+"><br><b>NOTES</b></p><p>1) Please note, the above&nbsp;rates include attendance at all sessions throughout meeting (keynote addresses, SciDataCon 2018 sessions, RDA’s 12<sup>th</sup>&nbsp;Plenary Meeting sessions, panel discussions, etc.), the welcome reception and the event dinner, as well as morning/afternoon tea and lunches on each day of the meeting
+.</p><p>2) Credit/Debit card payments are subject to an additional processing fee of 3.2%
+.</p><p>3) Registrants are liable for all bank transfer charges.</p>
+
+</div></div></div>    </article>
+
+</section>
+</div>
+			
+		</section>
+
+		
+	</div>
+
+
+
+
 	<div class="main-w3layouts wrapper">
 		<h1>Registration</h1>
 		<div class="main-registration-container">
@@ -635,7 +698,7 @@
 	</div>	 
 	<!-- copyright -->
 	<div class="w3copyright-agile">
-		<p><span>© International Data Week 2018. All rights reserved</span><br> Design by <a href="http://www.optimumqbw.com" target="_blank">Optimum Q</a></p>
+		<p><span>© International Data Week 2018. All rights reserved</span><br>  Designed And Developed by <a href="http://www.optimumqbw.com" target="_blank">Optimum Quality</a></p>
 	</div>
 	<!-- //copyright -->
 		

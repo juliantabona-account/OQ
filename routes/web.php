@@ -11,7 +11,8 @@
 |
 */
 
-<<<<<<< HEAD
+Auth::routes();
+
 Route::group(['prefix' => 'jobcards',  'middleware' => 'auth'], function () {
     /*
      *  Template Routes & Names for Index, Create, Store, Show, Edit, Update & Destroy
@@ -40,122 +41,11 @@ Route::group(['prefix' => 'jobcards',  'middleware' => 'auth'], function () {
     });
 });
 
-=======
-<<<<<<< HEAD
-use App\User;
-use Illuminate\Http\Request;
-use App\Mail\EventRegistered;
-
-Route::get('/', function () {
-    return view('index');
-});
-
-Route::post('/register', function (Request $request) {
-    //  If we have the email provided
-    if (!empty($request->input('email'))) {
-        // Get the user from the database
-        $user = User::where('email', $request->input('email'))->first();
-
-        //  If the user exists
-        if (count($user)) {
-            //  Find out if they have payed successfully before
-            $hasTransactedBefore = $user->transactions->where('success_state', 1)->count();
-
-            //  If they have paid
-            if ($hasTransactedBefore != 0) {
-                //  Notify the user
-                $request->session()->flash('alert', array('You have already registered and paid for this event! Visit your email to verify. Thank you', 'success'));
-
-                return back();
-            }
-
-            //  Go back and let the user know they have paid before
-        } else {
-            if ($request->input('abortRegistration') == '1') {
-                //  Notify the user
-                $request->session()->flash('alert', array('Registration with "'.$request->input('email').'" does not exist. Please re-enter the email you used when registering previously otherwise return to <a href="/">Registration</a>', 'success'));
-
-                return back();
-            } else {
-                //  Create a new user
-                $user = User::create($request->all());
-
-                Mail::to($request->input('email'))->send(new EventRegistered($user));
-
-                //Alert update success
-                $request->session()->flash('alert', array('You have been registered successfully! Complete your application by paying for your seat', 'success'));
-            }
-        }
-
-        if (count($user)) {
-            $transaction = $user->transactions()->create([
-                'user_id' => $user->id,
-            ]);
-            session(['user' => $user, 'transaction' => $transaction]);
-        }
-
-        return redirect('/payment-options');
-    } else {
-        $request->session()->flash('alert', array('Please register!', 'danger'));
-
-        return redirect('/');
-    }
-
-    //Mail::to( $request->input('email_address'))->send(new EventRegistered($user));
-    //} else {
-        //$request->session()->flash('status','You have already Registered For this Event');
-        // return view('welcome');
-    //}
-});
-
-Route::get('/payment-options', function () {
-    return view('payment');
-});
-
-Route::get('/paymentSuccessful', function () {
-    return view('paymentSuccessful');
-});
-
-Route::get('/paymentUnSuccessful', function () {
-    return view('paymentUnSuccessful');
-=======
->>>>>>> 4af73ef3d6103c68d7b2264387ed7dff74e3f8b9
 Route::get('/', function () {
     return view('auth.login');
 })->middleware('guest');
 
 Route::get('/overview', function () {
-<<<<<<< HEAD
-    //  Lets assume
-    $userHasBranch = false;
-    $userHasCompany = false;
-    //  Get the users branch
-    $usersCompanyBranch = Auth::user()->companyBranch;
-    //  If the user has been assigned a branch then get more data
-    if ($usersCompanyBranch) {
-        $userHasBranch = true;
-        //  Get jobcards relating to the users branch
-        $jobcards = $usersCompanyBranch->jobcards()->paginate(5, ['*'], 'jobcards');
-        //  Get the branch parent company
-        $usersCompany = $usersCompanyBranch->company;
-        //  If the branch has been assigned to a parent company
-        if ($usersCompany) {
-            $userHasCompany = true;
-            //  Get the total number of clients relating to the users company
-            $clientsCount = $usersCompany->clients->count();
-            //  Get the total number of contractors relating to the users company
-            $contractorsCount = $usersCompany->contractors->count();
-            //  Get all recent activities relating to the users company
-            $recentActivities = $usersCompany->recentActivities()->paginate(3, ['*'], 'activities');
-            //  return $recentActivities;
-            $jobcardProcessSteps = $usersCompany->processForms->where('selected', 1)->where('type', 'jobcard')->first()->steps;
-        }
-    }
-
-    return view('overview.index', compact('jobcards', 'clientsCount', 'contractorsCount', 'recentActivities', 'jobcardProcessSteps',
-                                           'userHasBranch', 'userHasCompany'));
-})->middleware('auth')->name('overview');
-=======
     $jobcards = Auth::user()->companyBranch->jobcards()->paginate(5, ['*'], 'jobcards');
     $clientsCount = Auth::user()->companyBranch->company->clients->count();
     $contractorsCount = Auth::user()->companyBranch->company->contractors->count();
@@ -166,7 +56,6 @@ Route::get('/overview', function () {
 
     return view('overview.index', compact('jobcards', 'clientsCount', 'contractorsCount', 'recentActivities', 'jobcardProcessSteps'));
 })->middleware('auth');
->>>>>>> 4af73ef3d6103c68d7b2264387ed7dff74e3f8b9
 
 Route::group(['prefix' => 'profiles',  'middleware' => 'auth'], function () {
     Route::get('/', 'UserController@index')->name('profiles');
@@ -280,16 +169,8 @@ Route::get('/calendar', function () {
     });
     */
     return view('calendar.index', compact('jobcards'));
->>>>>>> d0320244a16f691a5d0934a7b2fa14720f9c1278
 });
 
 Route::get('/emailtemplate', function () {
     return view('sendEmailTemplate');
 });
-<<<<<<< HEAD
-
-Auth::routes();
-
-//Route::get('/home', 'HomeController@index')->name('home');
-=======
->>>>>>> 4af73ef3d6103c68d7b2264387ed7dff74e3f8b9

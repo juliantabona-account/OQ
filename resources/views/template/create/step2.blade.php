@@ -13,6 +13,12 @@
                 box-shadow: 0px 2px 5px #00000014;
             }
 
+            .modal .pr-form-container{
+                max-height: 400px;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
             .process-form-container,
             .draggable-form-box{
                 min-height: 100px;
@@ -20,14 +26,18 @@
                 margin: 0 0 15px 0;
             }
 
-            li.section-container h4 {
+            li.section-container h4{
                 padding: 10px;
                 transition: background .35s ease-in-out;
             }
 
-            li.section-container:hover h4 {
+            li.section-container:hover h4.heading-highlight {
                 background: #ffd2a2;
                 transition: background .35s ease-in-out;
+            }
+
+            li.section-container .field-container {
+                padding:20px;
             }
 
             /*  The item being dragged   */
@@ -43,7 +53,6 @@
             }
 
             /*  The item being dragged on a dragged state   */
-            li.dragged,
             li.dragged {
                 background: #ffbe0061;
                 position: absolute;
@@ -78,18 +87,27 @@
             li.section-container:hover .decrease-section-btn,
             li.section-container:hover .section-handle,
 
-            li:hover .field-handle,
-            li:hover .delete-column-btn,
-            li:hover .edit-column-btn,
-            li:hover .increase-column-btn,
-            li:hover .decrease-column-btn
+            .field-container li:hover .field-handle,
+            .field-container li:hover .delete-column-btn,
+            .field-container li:hover .edit-column-btn,
+            .field-container li:hover .increase-column-btn,
+            .field-container li:hover .decrease-column-btn
             {
                 display: block;
                 cursor: move !important;
                 z-index: 10;
                 position: absolute;
                 right: 50%;
-                top: 10px;
+                top: 14px;
+            }
+
+            .field-container li:hover .field-handle,
+            .field-container li:hover .delete-column-btn,
+            .field-container li:hover .edit-column-btn,
+            .field-container li:hover .increase-column-btn,
+            .field-container li:hover .decrease-column-btn
+            {
+                top: 0;
             }
 
             /*  The dragger button, delete column button, increase column button and decrease column button on hover state
@@ -100,11 +118,11 @@
             li.section-container .increase-section-btn:hover,
             li.section-container .decrease-section-btn:hover,
 
-            li .field-handle:hover,
-            li .delete-column-btn:hover,
-            li .edit-column-btn:hover,
-            li .increase-column-btn:hover,
-            li .decrease-column-btn:hover
+            .field-container li .field-handle:hover,
+            .field-container li .delete-column-btn:hover,
+            .field-container li .edit-column-btn:hover,
+            .field-container li .increase-column-btn:hover,
+            .field-container li .decrease-column-btn:hover
             {
                 color: #fba200;
             }
@@ -112,7 +130,7 @@
             /*  The increase column button on hover state
                 when the draggable item is being hovered   
             */
-            li:hover .increase-column-btn{
+            .field-container li:hover .increase-column-btn{
                 right: 15px;
                 cursor: pointer !important;
             }
@@ -120,13 +138,13 @@
             /*  The decrease column button on hover state
                 when the draggable item is being hovered   
             */
-            li:hover .decrease-column-btn{
+            .field-container li:hover .decrease-column-btn{
                 right: 35px;
                 cursor: pointer !important;
             }
 
             li.section-container:hover .edit-section-btn,
-            li:hover .edit-column-btn{
+            .field-container li:hover .edit-column-btn{
                 right: 55px;
                 cursor: pointer !important;
             }
@@ -135,7 +153,7 @@
                 when the draggable item is being hovered   
             */
             li.section-container:hover .delete-section-btn,
-            li:hover .delete-column-btn{
+            .field-container li:hover .delete-column-btn{
                 right: 75px;
                 cursor: pointer !important;
             }
@@ -236,9 +254,10 @@
                             <form method="POST" action="{{ route('jobcard.processForm.create.step2',[$processForm->id]) }}">
                                 {{ method_field('PUT') }}
                                 @csrf
-                                <input id="formBuild" type="hidden" value="{{ json_encode( $processForm->form_structure ) }}" name="formBuild">
                                 <div class="row">
-                                    <ol id = "target_container" class="col-12"><input type="hidden" value="{{ json_encode( $processForm->form_structure ) }}"></ol>
+                                    <ol id = "target_container" class="col-12">
+                                        <input type="hidden" value="{{ json_encode( $processForm->form_structure ) }}">
+                                    </ol>
                                     <div class="col-12">
                                         <button id="submittionBtn" type="button" class="btn btn-primary pr-2 mr-2 float-right">
                                             {!! !empty( $processForm->form_structure ) ? '<span class="pr-3">Save</span>' : 'Next Step <i class="icon-arrow-right icons"></i>' !!}

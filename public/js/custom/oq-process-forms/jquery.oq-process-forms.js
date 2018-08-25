@@ -14,14 +14,17 @@
                             showProgess: true
                         }, 
                         sectionSettings:{
-                            draggable: true,
-                            editable: true,
+                            draggable: false,
+                            editable: false,
                             showHeading: true,
-                            showBody: true
+                            showHeadingHighlight: false,
+                            customHeadingText: '',
+                            showBody: true,
+                            customBodyText: '',
                         }, 
                         fieldSettings:{
-                            draggable: true,
-                            editable: true
+                            draggable: false,
+                            editable: false
                         }, 
                         optionSettings:{
                             draggable: true
@@ -58,7 +61,10 @@
                     using the content we have. The "sections" [in 2nd parameter] is the object of the form sections. It will
                     be used to calculate the progress percentage.
                 */
-               buildForm(form_build);
+               var build = buildForm(form_build);
+
+                //  Attach form
+                $(currSelection).append( build );
 
                 //  Refresh all section drag&drop, fields drag&drop, options drag&drop, dropify fields, date-picker fields, e.t.c
                 refresh_plugins();
@@ -72,6 +78,9 @@
             This is more a design and user experience consideration. 
         */
         function buildForm(form_build, custom_type){
+
+            //  Lets start with an empty form
+            var form_html = '';
 
             //  Lets get the collection of sections in the current build structure
             
@@ -95,14 +104,15 @@
             /*  Lets determine the type of form we want to build, then display the build
                 out to the user. 
             */
-            if(config.formSettings.type == 'basic'){
+            if(config.formSettings.type == 'basic' ||
+               custom_type == 'basic'
+            ){
                 /*  "basic" represents a simple and straight forward form showcasing all sections, fields and options available.
                     The user can interact with the sections, fields and options as well as edit the entire form at once with no
                     hidden inputs and values.
                 */
-
-                //  Attach progress bar and form
-                $(currSelection).append( progress + sections_html );
+               
+                form_html = progress + '<ul class="pr-form-container p-0">' + sections_html + '</ul>';
 
             }else if(config.formSettings.type == 'pop_process'){
                 /*  "pop_process" represents a breadcrumb process where relevant section 
@@ -111,19 +121,18 @@
                     be able to edit each section at a time.
                 */
 
-                build = '<div class="col-12">'+
-                            '<nav id = "prf_nav" aria-label="breadcrumb" role="navigation">'+
-                                '<ul class="breadcrumb breadcrumb-custom mb-2 pt-2">'+
-                                sections_html+
-                                '</ul>'+
-                                progress +
-                            '</nav>'+
-                        '</div>';
-                                
-                //  Attach form
-                $(currSelection).append( build );
+                form_html = '<div class="col-12">'+
+                                '<nav id = "prf_nav" aria-label="breadcrumb" role="navigation">'+
+                                    '<ul class="breadcrumb breadcrumb-custom mb-2 pt-2">'+
+                                    sections_html+
+                                    '</ul>'+
+                                    progress +
+                                '</nav>'+
+                            '</div>';
                 
             }
+
+            return form_html;
 
         }
 
@@ -163,17 +172,31 @@
             var section_heading = '', section_body = '', tools = '', add_field_btn = '', dragTool = '', draggableClass = '', 
                 active_state = '', tick = '', fields_html = '', build = '';
 
-            //  Determine whether or not to show the sections details e.g) Section heading and description               
-            config.sectionSettings.showHeading ? section_heading = section.name
+            //  Determine whether or not to show the section heading               
+            config.sectionSettings.showHeading ? (
+                //  Determine whether or not to show the original section heading or custom heading
+                config.sectionSettings.customHeadingText != '' ? section_heading = config.sectionSettings.customHeadingText
+                                                               : section_heading = section.name
+                                               )
                                                : section_heading = '';
-            config.sectionSettings.showBody ? section_body = section.description 
+
+            //  Determine whether or not to show the heading highlight on hover
+            config.sectionSettings.showHeadingHighlight ? heading_highlight = 'heading-highlight '
+                                                        : heading_highlight = '';
+
+            //  Determine whether or not to show the section body    
+            config.sectionSettings.showBody ? (
+                //  Determine whether or not to show the original section body or custom body
+                config.sectionSettings.customBodyText != '' ? section_body = config.sectionSettings.customBodyText
+                                                            : section_body = section.description
+                                            )
                                             : section_body = '';
 
             /*  Determine whether or not the section is editable. If it is then display the editing
                 tools to edit and delete
             */
             config.sectionSettings.editable ? tools =  '<i class="delete-section-btn icon-trash icons"></i>'+
-                                                        '<i class="edit-section-btn icon-pencil dragger-btn" aria-hidden="true"></i>'
+                                                        '<i class="edit-section-btn icon-pencil" aria-hidden="true"></i>'
                                             : tools =  '';
 
             //  If this section is editable then display the button to add additional fields  
@@ -228,7 +251,7 @@
                                 tools+
                                 dragTool+
                             '</div>'+
-                            '<h4 class="pl-2 pb-2 section-name">'+section_heading+'</h4>'+
+                            '<h4 class="'+ heading_highlight +'pl-2 pb-2 section-name">'+section_heading+'</h4>'+
                             '<p class="ml-2 section-desc">'+section_body+'</p>'+
                             '<div class="form-box mb-2">'+
                                 '<ol class="row field-container vertical">'+
@@ -244,8 +267,8 @@
                 build = '<li id="'+section.id+'" data-toggle="tooltip" data-placement="top" title=""'+
                             'class="breadcrumb-item progress-status-tabs section-container'+draggableClass+active_state+'"'+
                             'data-original-title="'+section_body+'">'+
-                            '<h4 class="pl-2 pb-2 section-name d-none">'+section_heading+'</h4>'+
-                            '<p class="ml-2 section-desc d-none">'+section_body+'</p>'+
+                            '<h4 class="section-name d-none">'+section_heading+'</h4>'+
+                            '<p class="section-desc d-none">'+section_body+'</p>'+
                             '<span>'+
                                 section_heading+
                                 tick+
@@ -289,7 +312,7 @@
                 tools to resize, edit and delete
             */
            config.fieldSettings.editable ? tools = '<i class="delete-column-btn icon-trash icons"></i>'+
-                                                   '<i class="edit-column-btn icon-pencil dragger-btn" aria-hidden="true"></i>'+
+                                                   '<i class="edit-column-btn icon-pencil" aria-hidden="true"></i>'+
                                                    '<i class="decrease-column-btn icon-arrow-left-circle icons"></i>'+
                                                    '<i class="increase-column-btn icon-arrow-right-circle icons"></i>'
                                          : tools =  '';
@@ -452,7 +475,7 @@
             });
 
             //  Refresh the draggable to detect new draggable sections
-            makeSortable('.process-form-container', 'sections', '.section-handle');
+            makeSortable('.pr-form-container', 'sections', '.section-handle');
 
             //  Refresh the draggable to detect new draggable input fields
             makeSortable('.field-container', 'fields', '.field-handle');
@@ -655,6 +678,7 @@
                 to actually know the type of form, sections, fields and options we are building
             */
            console.log('stage 1');
+           var curr =  $(this);
            var form_build = JSON.parse(  $(currSelection).find('input[type="hidden"]').val() );
            console.log('stage 2');
        
@@ -668,30 +692,35 @@
                 var section_name = '';
 
                 $.each(sections, function( index, section ) {
-                    if(section.id == $(this).attr('id')){
+                    if(section.id == $(curr).attr('id')){
                         section_name =  section.name;
+                        console.log('id        :'+  $(curr).attr('id'));
+                        console.log('section.id: '+section.id);
+                        console.log('section_name: '+section_name);
                     }
                 });
 
-                createModal(section_name, form_html);
+                createModal(section_name, form_html, $(curr).attr('id') );
            }
             
         });
         
-        function createModal(title, body, button_name = 'Save'){
+        function createModal(title, body, show_only_section_id = null, button_name = 'Save'){
 
             $('#prf_modal').remove();
+            
+            var capitalizedTitle = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
 
             var modal = '<div id="prf_modal" class="modal" tabindex="-1" role="dialog">'+
                             '<div class="modal-dialog" role="document">'+
                                 '<div class="modal-content">'+
-                                    '<div class="modal-header">'+
-                                        '<h5 class="modal-title">'+title+'</h5>'+
+                                    '<div class="modal-header pb-0">'+
+                                        '<h4 class="modal-title">'+capitalizedTitle+'</h4>'+
                                         '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
                                             '<span aria-hidden="true">&times;</span>'+
                                         '</button>'+
                                     '</div>'+
-                                    '<div class="modal-body pt-2">'+
+                                    '<div class="modal-body p-2">'+
                                         body+
                                     '</div>'+
                                     '<div class="modal-footer">'+
@@ -702,8 +731,20 @@
                             '</div>'+
                         '</div>';
 
+            //  Place the content on the modal
             $('body').append(modal);
 
+            //  If we only want to show a specific section then hide all others
+            if(show_only_section_id != null){
+                //  Hide all sections
+                $('.pr-form-container li.section-container').hide();
+                //  Show only the active section (the one that was clicked on)
+                $('.pr-form-container li#'+show_only_section_id).show();
+                //  Hide the active section name
+                $('.pr-form-container li#'+show_only_section_id+' .section-name').hide();
+            }
+
+            //  Show the modal
             $('#prf_modal').modal('show');
 
             //  Refresh all section drag&drop, fields drag&drop, options drag&drop, dropify fields, date-picker fields, e.t.c
